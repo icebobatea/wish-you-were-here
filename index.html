@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wish You Were Here — A Century of Victorian Postcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <header class="hero">
+    <p class="stamp">Melbourne · 1880–2015</p>
+    <h1>Wish You Were Here</h1>
+    <p class="lede">Before phones had cameras, a postcard was how you showed someone where you were. Museums Victoria keeps nearly a thousand of them — souvenirs of a grand exhibition, notes from soldiers in the desert, and messages from migrants to the families they left behind. Here is what they tell us.</p>
+  </header>
+
+  <main>
+    <section id="where">
+      <h2>Where the postcards take us</h2>
+      <p>Most of the cards picture Australia, and most of those picture one building: Melbourne's Royal Exhibition Building. But a second cluster sits half a world away, in Egypt and Iraq. These are the postcards Australian soldiers bought and sent home during the First World War.</p>
+      <figure>
+        <div id="depicted_map" class="chart"></div>
+        <figcaption>Circle size shows how many postcards depict each country. Colour shows the most common theme there. Hover for details.</figcaption>
+      </figure>
+    </section>
+
+    <section id="when">
+      <h2>The golden age of the postcard</h2>
+      <p>About seven in ten dated cards in the collection come from just twenty years. Between 1900 and 1919, cheap printing and a reliable postal service made the postcard the text message of its day.</p>
+      <figure>
+        <div id="timeline" class="chart"></div>
+        <figcaption>Postcards in the collection by the earliest year they were made, sent or used.</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer>
+    <h3>About this page</h3>
+    <p><strong>Data:</strong> <a href="https://collections.museumsvictoria.com.au/developers">Museums Victoria Collections API</a> (946 item records matching "postcard", CC BY 4.0). Base map: <a href="https://www.naturalearthdata.com/">Natural Earth</a>. Country positions are approximate centroids.</p>
+    <p><strong>Note:</strong> this shows what one museum chose to keep, not every postcard ever sent. The large number of Exhibition Building cards reflects that the building is a Museums Victoria venue.</p>
+    <p><strong>Author:</strong> Paul · FIT3179 Data Visualisation, Monash University · October 2026. Built with Vega-Lite; AI tools were used to assist with data preparation and code.</p>
+  </footer>
+
+  <script>
+    const opts = {actions: false, renderer: "svg"};
+    vegaEmbed("#depicted_map", "js/depicted_map.vg.json", opts);
+    vegaEmbed("#timeline", "js/timeline.vg.json", opts);
+  </script>
+</body>
+</html>
