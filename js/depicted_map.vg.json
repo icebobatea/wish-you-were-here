@@ -1,0 +1,194 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Proportional symbol map: where the postcards in the Museums Victoria collection depict.",
+  "width": "container",
+  "height": 440,
+  "projection": {
+    "type": "equalEarth",
+    "rotate": [
+      -60,
+      0,
+      0
+    ]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/ne_110m_admin_0_countries.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "ne_110m_admin_0_countries"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#e9e1cf",
+        "stroke": "#fbf7ef",
+        "strokeWidth": 0.6
+      }
+    },
+    {
+      "data": {
+        "url": "data/depicted_countries.csv"
+      },
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#fbf7ef",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "longitude": {
+          "field": "longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "latitude",
+          "type": "quantitative"
+        },
+        "size": {
+          "field": "postcards",
+          "type": "quantitative",
+          "title": "Postcards",
+          "scale": {
+            "type": "sqrt",
+            "range": [
+              30,
+              2600
+            ]
+          },
+          "legend": {
+            "values": [
+              1,
+              10,
+              50,
+              250
+            ],
+            "orient": "bottom-left",
+            "symbolFillColor": "#b9ad97"
+          }
+        },
+        "color": {
+          "field": "top_theme",
+          "type": "nominal",
+          "title": "Most common theme",
+          "scale": {
+            "domain": [
+              "Exhibition Building",
+              "War & service",
+              "Migration",
+              "Everyday correspondence",
+              "Other"
+            ],
+            "range": [
+              "#c08a1e",
+              "#9b2c2c",
+              "#2f5d7c",
+              "#5b7f45",
+              "#a39a8a"
+            ]
+          },
+          "legend": {
+            "orient": "top-left",
+            "labelLimit": 240
+          }
+        },
+        "tooltip": [
+          {
+            "field": "country",
+            "type": "nominal",
+            "title": "Place depicted"
+          },
+          {
+            "field": "postcards",
+            "type": "quantitative",
+            "title": "Postcards"
+          },
+          {
+            "field": "top_theme",
+            "type": "nominal",
+            "title": "Most common theme"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "longitude": 38,
+            "latitude": 12,
+            "label": "Egypt & Iraq: soldiers' cards from WWI"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "center",
+        "dy": 0
+      },
+      "encoding": {
+        "longitude": {
+          "field": "longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "latitude",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "longitude": 134.5,
+            "latitude": -25.7,
+            "label": "Mostly Melbourne's Exhibition Building"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "center",
+        "dy": -40
+      },
+      "encoding": {
+        "longitude": {
+          "field": "longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "latitude",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "legend": {
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleColor": "#3b3226",
+      "labelColor": "#3b3226"
+    }
+  }
+}
