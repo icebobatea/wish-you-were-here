@@ -79,7 +79,7 @@ figure {
   border-radius: 4px;
 }
 
-.chart { width: 100%; }
+.chart { width: 100%; overflow-x: auto; }
 
 figcaption {
   margin-top: 8px;
@@ -102,4 +102,22 @@ a { color: var(--stamp); }
   body { font-size: 17px; }
   .hero, main, footer { padding-left: 16px; padding-right: 16px; }
   figure { padding: 12px; }
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
+  align-items: center;
+  margin: 24px 0;
+}
+
+.split figure { margin: 0; }
+
+.split p { max-width: 40ch; }
+
+#waffle { max-width: 100%; overflow: hidden; }
+
+@media (max-width: 760px) {
+  .split { grid-template-columns: 1fr; }
 }
