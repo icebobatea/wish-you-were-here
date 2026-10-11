@@ -1,6 +1,11 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Proportional symbol map: where the postcards in the Museums Victoria collection depict.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
   "width": "container",
   "height": 440,
   "projection": {
@@ -81,10 +86,10 @@
               "Other"
             ],
             "range": [
-              "#c08a1e",
+              "#b07d10",
               "#9b2c2c",
-              "#2f5d7c",
-              "#5b7f45",
+              "#1a66a8",
+              "#4a8a32",
               "#a39a8a"
             ]
           },
@@ -189,6 +194,13 @@
       "titleFontSize": 12,
       "titleColor": "#3b3226",
       "labelColor": "#3b3226"
-    }
+    },
+    "background": "transparent"
+  },
+  "padding": {
+    "left": 10,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
   }
 }

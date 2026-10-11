@@ -1,0 +1,359 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Dot maps: Victorian places linked to postcards (sent from, made in or depicted), statewide and in Melbourne.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "hconcat": [
+    {
+      "title": {
+        "text": "Victoria",
+        "fontSize": 13,
+        "font": "Playfair Display",
+        "anchor": "start",
+        "color": "#3b3226"
+      },
+      "width": 320,
+      "height": 280,
+      "projection": {
+        "type": "mercator",
+        "center": [
+          145.5,
+          -36.6
+        ],
+        "scale": 2000,
+        "translate": [
+          160,
+          140
+        ]
+      },
+      "layer": [
+        {
+          "data": {
+            "url": "data/victoria.geojson",
+            "format": {
+              "type": "json",
+              "property": "features"
+            }
+          },
+          "mark": {
+            "type": "geoshape",
+            "fill": "#e9e1cf",
+            "stroke": "#fbf7ef",
+            "strokeWidth": 1,
+            "clip": true
+          }
+        },
+        {
+          "data": {
+            "url": "data/vic_localities.csv"
+          },
+          "mark": {
+            "type": "circle",
+            "opacity": 0.85,
+            "stroke": "#fbf7ef",
+            "strokeWidth": 1,
+            "clip": true
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            },
+            "size": {
+              "field": "postcards",
+              "type": "quantitative",
+              "title": "Postcards",
+              "scale": {
+                "type": "sqrt",
+                "domain": [
+                  1,
+                  300
+                ],
+                "range": [
+                  30,
+                  1400
+                ]
+              },
+              "legend": {
+                "values": [
+                  1,
+                  10,
+                  50,
+                  300
+                ]
+              }
+            },
+            "color": {
+              "field": "top_theme",
+              "type": "nominal",
+              "title": "Most common theme",
+              "scale": {
+                "domain": [
+                  "Exhibition Building",
+                  "War & service",
+                  "Migration",
+                  "Everyday correspondence",
+                  "Other"
+                ],
+                "range": [
+                  "#b07d10",
+                  "#9b2c2c",
+                  "#1a66a8",
+                  "#4a8a32",
+                  "#a39a8a"
+                ]
+              }
+            },
+            "tooltip": [
+              {
+                "field": "place",
+                "title": "Place"
+              },
+              {
+                "field": "postcards",
+                "type": "quantitative",
+                "title": "Postcards"
+              },
+              {
+                "field": "top_theme",
+                "title": "Most common theme"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "data/vic_localities.csv"
+          },
+          "transform": [
+            {
+              "filter": "datum.postcards >= 13"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "dy": -12,
+            "fontSize": 11,
+            "clip": true,
+            "color": "#3b3226"
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "place"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Melbourne close-up",
+        "fontSize": 13,
+        "font": "Playfair Display",
+        "anchor": "start",
+        "color": "#3b3226"
+      },
+      "width": 320,
+      "height": 280,
+      "projection": {
+        "type": "mercator",
+        "center": [
+          145.0,
+          -37.86
+        ],
+        "scale": 31000,
+        "translate": [
+          160,
+          140
+        ]
+      },
+      "layer": [
+        {
+          "data": {
+            "url": "data/victoria.geojson",
+            "format": {
+              "type": "json",
+              "property": "features"
+            }
+          },
+          "mark": {
+            "type": "geoshape",
+            "fill": "#e9e1cf",
+            "stroke": "#fbf7ef",
+            "strokeWidth": 1,
+            "clip": true
+          }
+        },
+        {
+          "data": {
+            "url": "data/vic_localities.csv"
+          },
+          "mark": {
+            "type": "circle",
+            "opacity": 0.85,
+            "stroke": "#fbf7ef",
+            "strokeWidth": 1,
+            "clip": true
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            },
+            "size": {
+              "field": "postcards",
+              "type": "quantitative",
+              "title": "Postcards",
+              "scale": {
+                "type": "sqrt",
+                "domain": [
+                  1,
+                  300
+                ],
+                "range": [
+                  30,
+                  1400
+                ]
+              },
+              "legend": {
+                "values": [
+                  1,
+                  10,
+                  50,
+                  300
+                ]
+              }
+            },
+            "color": {
+              "field": "top_theme",
+              "type": "nominal",
+              "title": "Most common theme",
+              "scale": {
+                "domain": [
+                  "Exhibition Building",
+                  "War & service",
+                  "Migration",
+                  "Everyday correspondence",
+                  "Other"
+                ],
+                "range": [
+                  "#b07d10",
+                  "#9b2c2c",
+                  "#1a66a8",
+                  "#4a8a32",
+                  "#a39a8a"
+                ]
+              }
+            },
+            "tooltip": [
+              {
+                "field": "place",
+                "title": "Place"
+              },
+              {
+                "field": "postcards",
+                "type": "quantitative",
+                "title": "Postcards"
+              },
+              {
+                "field": "top_theme",
+                "title": "Most common theme"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "data/vic_localities.csv"
+          },
+          "transform": [
+            {
+              "filter": "datum.postcards >= 8"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "dy": -12,
+            "fontSize": 11,
+            "clip": true,
+            "color": "#3b3226"
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "place"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "spacing": 24,
+  "resolve": {
+    "scale": {
+      "size": "shared",
+      "color": "shared"
+    }
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}
