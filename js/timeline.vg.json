@@ -1,14 +1,23 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Postcards in the collection by year made or used, highlighting the 1900-1919 golden age.",
-  "width": "container",
-  "height": 260,
+  "description": "Overview+detail timeline: postcards by year; brush the lower strip to zoom.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
   "data": {
     "url": "data/postcards.csv"
   },
   "transform": [
     {
-      "filter": "isValid(datum.year) && datum.year >= 1880"
+      "filter": "isValid(datum.year) && datum.year >= 1869"
     },
     {
       "aggregate": [
@@ -20,91 +29,147 @@
       "groupby": [
         "year"
       ]
+    },
+    {
+      "calculate": "toNumber(datum.year) + 0.8",
+      "as": "year_end"
     }
   ],
-  "layer": [
+  "vconcat": [
     {
-      "data": {
-        "values": [
-          {
-            "start": 1900,
-            "end": 1919
+      "width": "container",
+      "height": 240,
+      "layer": [
+        {
+          "data": {
+            "values": [
+              {
+                "start": 1900,
+                "end": 1919,
+                "mid": 1909.5,
+                "label": "The golden age, 1900–1919"
+              }
+            ]
+          },
+          "mark": {
+            "type": "rect",
+            "fill": "#c08a1e",
+            "opacity": 0.12
+          },
+          "encoding": {
+            "x": {
+              "field": "start",
+              "type": "quantitative"
+            },
+            "x2": {
+              "field": "end"
+            }
           }
-        ]
-      },
-      "mark": {
-        "type": "rect",
-        "fill": "#c08a1e",
-        "opacity": 0.12
-      },
-      "encoding": {
-        "x": {
-          "field": "start",
-          "type": "quantitative",
-          "scale": {
-            "domain": [
-              1880,
-              2015
-            ],
-            "nice": false
-          },
-          "axis": {
-            "format": "d",
-            "tickCount": 14,
-            "grid": false
-          },
-          "title": null
         },
-        "x2": {
-          "field": "end"
+        {
+          "data": {
+            "values": [
+              {
+                "mid": 1920.5,
+                "label": "← The golden age, 1900–1919"
+              }
+            ]
+          },
+          "mark": {
+            "type": "text",
+            "y": 12,
+            "align": "left",
+            "font": "Source Serif 4",
+            "fontSize": 12,
+            "fontStyle": "italic",
+            "fill": "#7a5512"
+          },
+          "encoding": {
+            "x": {
+              "field": "mid",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "label"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "bar",
+            "color": "#9b2c2c",
+            "clip": true,
+            "orient": "vertical"
+          },
+          "encoding": {
+            "x2": {
+              "field": "year_end"
+            },
+            "x": {
+              "field": "year",
+              "type": "quantitative",
+              "scale": {
+                "domain": {
+                  "param": "brush"
+                },
+                "nice": false,
+                "zero": false
+              },
+              "axis": {
+                "format": "d",
+                "grid": false
+              },
+              "title": null
+            },
+            "y": {
+              "field": "postcards",
+              "type": "quantitative",
+              "title": "Postcards",
+              "axis": {
+                "tickCount": 4
+              }
+            },
+            "tooltip": [
+              {
+                "field": "year",
+                "type": "quantitative",
+                "title": "Year",
+                "format": "d"
+              },
+              {
+                "field": "postcards",
+                "type": "quantitative",
+                "title": "Postcards"
+              }
+            ]
+          }
         }
-      }
+      ]
     },
     {
-      "data": {
-        "values": [
-          {
-            "x": 1909.5,
-            "label": "The golden age, 1900\u20131919"
-          }
-        ]
-      },
-      "mark": {
-        "type": "text",
-        "y": -6,
-        "font": "Source Serif 4",
-        "fontSize": 12,
-        "fontStyle": "italic",
-        "fill": "#7a5512"
-      },
-      "encoding": {
-        "x": {
-          "field": "x",
-          "type": "quantitative",
-          "scale": {
-            "domain": [
+      "width": "container",
+      "height": 50,
+      "params": [
+        {
+          "name": "brush",
+          "select": {
+            "type": "interval",
+            "encodings": [
+              "x"
+            ]
+          },
+          "value": {
+            "x": [
               1880,
-              2015
-            ],
-            "nice": false
-          },
-          "axis": {
-            "format": "d",
-            "tickCount": 14,
-            "grid": false
-          },
-          "title": null
-        },
-        "text": {
-          "field": "label"
+              2017
+            ]
+          }
         }
-      }
-    },
-    {
+      ],
       "mark": {
         "type": "bar",
-        "color": "#9b2c2c",
-        "width": 3
+        "color": "#b9ad97",
+        "width": 2
       },
       "encoding": {
         "x": {
@@ -112,42 +177,30 @@
           "type": "quantitative",
           "scale": {
             "domain": [
-              1880,
-              2015
+              1869,
+              2017
             ],
-            "nice": false
+            "nice": false,
+            "zero": false
           },
           "axis": {
             "format": "d",
-            "tickCount": 14,
-            "grid": false
+            "grid": false,
+            "tickCount": 8
           },
           "title": null
         },
         "y": {
           "field": "postcards",
           "type": "quantitative",
-          "title": "Postcards",
-          "axis": {
-            "tickCount": 4
-          }
-        },
-        "tooltip": [
-          {
-            "field": "year",
-            "type": "quantitative",
-            "title": "Year"
-          },
-          {
-            "field": "postcards",
-            "type": "quantitative",
-            "title": "Postcards"
-          }
-        ]
+          "axis": null
+        }
       }
     }
   ],
+  "spacing": 14,
   "config": {
+    "background": "transparent",
     "view": {
       "stroke": null
     },
@@ -158,8 +211,21 @@
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
       "gridColor": "#ece4d3",
-      "labelFontSize": 11,
-      "titleFontSize": 12
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
     }
   }
 }

@@ -1,0 +1,158 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Heatmap: number of postcards by decade and theme.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": "container",
+  "height": 210,
+  "data": {
+    "url": "data/postcards.csv"
+  },
+  "transform": [
+    {
+      "filter": "isValid(datum.year) && datum.year >= 1870"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "count",
+          "as": "postcards"
+        }
+      ],
+      "groupby": [
+        "decade",
+        "theme"
+      ]
+    },
+    {
+      "calculate": "datum.decade + 's'",
+      "as": "decade_label"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "decade_label",
+      "type": "ordinal",
+      "title": null,
+      "sort": {
+        "field": "decade"
+      },
+      "axis": {
+        "labelAngle": 0,
+        "labelFontSize": 11
+      }
+    },
+    "y": {
+      "field": "theme",
+      "type": "nominal",
+      "title": null,
+      "sort": [
+        "Exhibition Building",
+        "War & service",
+        "Migration",
+        "Everyday correspondence",
+        "Other"
+      ]
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "stroke": "#fbf7ef",
+        "strokeWidth": 2,
+        "cornerRadius": 2
+      },
+      "encoding": {
+        "color": {
+          "field": "postcards",
+          "type": "quantitative",
+          "title": "Postcards",
+          "scale": {
+            "type": "sqrt",
+            "range": [
+              "#f1e3c4",
+              "#6b2a12"
+            ]
+          },
+          "legend": {
+            "orient": "right",
+            "gradientLength": 160
+          }
+        },
+        "tooltip": [
+          {
+            "field": "decade_label",
+            "title": "Decade"
+          },
+          {
+            "field": "theme",
+            "title": "Theme"
+          },
+          {
+            "field": "postcards",
+            "type": "quantitative",
+            "title": "Postcards"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "postcards",
+          "type": "quantitative"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.postcards > 60",
+            "value": "#fbf7ef"
+          },
+          "value": "#3b3226"
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}
