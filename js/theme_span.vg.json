@@ -1,0 +1,231 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Range plot: earliest to latest year for each theme, with the middle half of its cards.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": "container",
+  "height": 230,
+  "data": {
+    "url": "data/theme_span.csv"
+  },
+  "encoding": {
+    "y": {
+      "field": "theme",
+      "type": "nominal",
+      "title": null,
+      "sort": [
+        "Exhibition Building",
+        "War & service",
+        "Migration",
+        "Everyday correspondence",
+        "Other"
+      ],
+      "axis": {
+        "domain": false,
+        "ticks": false,
+        "labelPadding": 8
+      }
+    },
+    "color": {
+      "field": "theme",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "Exhibition Building",
+          "War & service",
+          "Migration",
+          "Everyday correspondence",
+          "Other"
+        ],
+        "range": [
+          "#b07d10",
+          "#9b2c2c",
+          "#1a66a8",
+          "#4a8a32",
+          "#a39a8a"
+        ]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      {
+        "field": "theme",
+        "title": "Theme"
+      },
+      {
+        "field": "first",
+        "title": "Earliest card",
+        "format": "d"
+      },
+      {
+        "field": "last",
+        "title": "Latest card",
+        "format": "d"
+      },
+      {
+        "field": "mid_start",
+        "title": "Middle half from",
+        "format": "d"
+      },
+      {
+        "field": "mid_end",
+        "title": "Middle half to",
+        "format": "d"
+      },
+      {
+        "field": "cards",
+        "title": "Dated cards"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "data": {
+        "values": [
+          {
+            "start": 1914,
+            "end": 1918
+          }
+        ]
+      },
+      "mark": {
+        "type": "rect",
+        "fill": "#9b2c2c",
+        "opacity": 0.08
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1865,
+              2020
+            ],
+            "nice": false,
+            "zero": false
+          }
+        },
+        "x2": {
+          "field": "end"
+        },
+        "y": null,
+        "color": null,
+        "tooltip": null
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "x": 1916,
+            "label": "WWI"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "y": -8,
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#9b2c2c"
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        },
+        "y": null,
+        "color": null,
+        "tooltip": null
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 2,
+        "opacity": 0.6
+      },
+      "encoding": {
+        "x": {
+          "field": "first",
+          "type": "quantitative",
+          "title": null,
+          "scale": {
+            "domain": [
+              1865,
+              2020
+            ],
+            "nice": false,
+            "zero": false
+          },
+          "axis": {
+            "format": "d",
+            "tickCount": 8
+          }
+        },
+        "x2": {
+          "field": "last"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "bar",
+        "height": 16,
+        "cornerRadius": 4
+      },
+      "encoding": {
+        "x": {
+          "field": "mid_start",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "mid_end"
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Stacked bar chart: overseas countries most often depicted, split by theme.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": "container",
+  "height": 260,
+  "data": {
+    "url": "data/depicted_by_theme.csv"
+  },
+  "transform": [
+    {
+      "filter": "datum.depicted_country !== 'Australia'"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "postcards",
+          "as": "total"
+        }
+      ],
+      "groupby": [
+        "depicted_country"
+      ]
+    },
+    {
+      "calculate": "indexof([\"Exhibition Building\", \"War & service\", \"Migration\", \"Everyday correspondence\", \"Other\"], datum.theme)",
+      "as": "order"
+    }
+  ],
+  "mark": {
+    "type": "bar",
+    "height": {
+      "band": 0.7
+    },
+    "stroke": "#fbf7ef",
+    "strokeWidth": 1
+  },
+  "encoding": {
+    "y": {
+      "field": "depicted_country",
+      "type": "nominal",
+      "title": null,
+      "sort": "-x",
+      "axis": {
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "x": {
+      "field": "postcards",
+      "type": "quantitative",
+      "aggregate": "sum",
+      "title": "Postcards depicting the country",
+      "axis": {
+        "tickCount": 5
+      }
+    },
+    "color": {
+      "field": "theme",
+      "type": "nominal",
+      "title": "Theme",
+      "scale": {
+        "domain": [
+          "Exhibition Building",
+          "War & service",
+          "Migration",
+          "Everyday correspondence",
+          "Other"
+        ],
+        "range": [
+          "#b07d10",
+          "#9b2c2c",
+          "#1a66a8",
+          "#4a8a32",
+          "#a39a8a"
+        ]
+      },
+      "legend": {
+        "orient": "bottom",
+        "columns": 3
+      }
+    },
+    "order": {
+      "field": "order"
+    },
+    "tooltip": [
+      {
+        "field": "depicted_country",
+        "title": "Country"
+      },
+      {
+        "field": "theme",
+        "title": "Theme"
+      },
+      {
+        "field": "postcards",
+        "type": "quantitative",
+        "aggregate": "sum",
+        "title": "Postcards"
+      }
+    ]
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}
