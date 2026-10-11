@@ -1,0 +1,290 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Line chart: Victorians born in Britain, Ireland, Italy, Greece, India and China at each census, 1901-2011.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": "container",
+  "height": 320,
+  "data": {
+    "url": "data/vic_birthplace_trend.csv"
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "quantitative",
+      "title": "Census year",
+      "scale": {
+        "domain": [
+          1901,
+          2011
+        ],
+        "nice": false
+      },
+      "axis": {
+        "format": "d",
+        "values": [
+          1901,
+          1921,
+          1947,
+          1961,
+          1981,
+          2001,
+          2011
+        ],
+        "grid": false
+      }
+    },
+    "y": {
+      "field": "persons",
+      "type": "quantitative",
+      "title": "Victorians born there",
+      "axis": {
+        "format": "~s",
+        "tickCount": 5
+      }
+    },
+    "color": {
+      "field": "group",
+      "type": "nominal",
+      "title": "Born in",
+      "scale": {
+        "domain": [
+          "Britain",
+          "Ireland",
+          "Italy",
+          "Greece",
+          "India",
+          "China"
+        ],
+        "range": [
+          "#1a66a8",
+          "#1a66a8",
+          "#b07d10",
+          "#b07d10",
+          "#a23b72",
+          "#a23b72"
+        ]
+      },
+      "sort": [
+        "Britain",
+        "Ireland",
+        "Italy",
+        "Greece",
+        "India",
+        "China"
+      ],
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "symbolType": "stroke",
+        "symbolStrokeWidth": 2.5,
+        "symbolSize": 300
+      }
+    },
+    "strokeDash": {
+      "field": "group",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "Britain",
+          "Ireland",
+          "Italy",
+          "Greece",
+          "India",
+          "China"
+        ],
+        "range": [
+          [
+            1,
+            0
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            6,
+            4
+          ]
+        ]
+      },
+      "sort": [
+        "Britain",
+        "Ireland",
+        "Italy",
+        "Greece",
+        "India",
+        "China"
+      ],
+      "title": "Born in",
+      "legend": {
+        "orient": "top",
+        "direction": "horizontal",
+        "symbolType": "stroke",
+        "symbolStrokeWidth": 2.5,
+        "symbolSize": 300
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2.5
+      }
+    },
+    {
+      "params": [
+        {
+          "name": "hover",
+          "select": {
+            "type": "point",
+            "fields": [
+              "year"
+            ],
+            "on": "pointerover",
+            "nearest": true,
+            "clear": "pointerout"
+          }
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 60
+      },
+      "encoding": {
+        "opacity": {
+          "condition": {
+            "param": "hover",
+            "empty": false,
+            "value": 1
+          },
+          "value": 0
+        },
+        "strokeDash": null,
+        "tooltip": [
+          {
+            "field": "group",
+            "title": "Born in"
+          },
+          {
+            "field": "year",
+            "title": "Census"
+          },
+          {
+            "field": "persons",
+            "type": "quantitative",
+            "format": ",",
+            "title": "Victorians"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.year === 2011"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 6,
+        "fontSize": 12,
+        "fontWeight": 600
+      },
+      "encoding": {
+        "text": {
+          "field": "group"
+        },
+        "strokeDash": null
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "year": 1958,
+            "persons": 150000,
+            "label": "Post-war migration\\nfrom southern Europe"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#7a5512",
+        "lineBreak": "\\n",
+        "align": "center"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "persons",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        },
+        "color": null,
+        "strokeDash": null
+      }
+    }
+  ],
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}

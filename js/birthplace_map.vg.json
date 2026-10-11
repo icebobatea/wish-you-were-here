@@ -1,0 +1,179 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Choropleth map: number of Victorians born in each overseas country at the 1911 census (log scale).",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": "container",
+  "height": 420,
+  "projection": {
+    "type": "equalEarth",
+    "rotate": [
+      -60,
+      0,
+      0
+    ]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/ne_110m_admin_0_countries.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "ne_110m_admin_0_countries"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#efe9dc",
+        "stroke": "#fbf7ef",
+        "strokeWidth": 0.6
+      }
+    },
+    {
+      "data": {
+        "url": "data/ne_110m_admin_0_countries.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "ne_110m_admin_0_countries"
+        }
+      },
+      "transform": [
+        {
+          "lookup": "properties.NAME",
+          "from": {
+            "data": {
+              "url": "data/vic_birthplace_1911.csv"
+            },
+            "key": "country",
+            "fields": [
+              "persons"
+            ]
+          }
+        },
+        {
+          "filter": "isValid(datum.persons) && datum.persons > 0"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "stroke": "#fbf7ef",
+        "strokeWidth": 0.6
+      },
+      "encoding": {
+        "color": {
+          "field": "persons",
+          "type": "quantitative",
+          "title": "Victorians born there, 1911",
+          "scale": {
+            "type": "log",
+            "domain": [
+              1,
+              120000
+            ],
+            "range": [
+              "#d9e6f2",
+              "#0d3a66"
+            ]
+          },
+          "legend": {
+            "orient": "bottom-left",
+            "format": "~s",
+            "titleLimit": 260,
+            "values": [
+              1,
+              10,
+              100,
+              1000,
+              10000,
+              100000
+            ],
+            "gradientLength": 200
+          }
+        },
+        "tooltip": [
+          {
+            "field": "properties.NAME",
+            "title": "Country"
+          },
+          {
+            "field": "persons",
+            "type": "quantitative",
+            "format": ",",
+            "title": "Victorians born there (1911)"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": -18,
+            "lat": -30,
+            "label": "Darkest: Britain (117,000)\\nand Ireland (41,000)"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "lineBreak": "\\n",
+        "align": "center"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}
