@@ -1,0 +1,166 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Dumbbell chart: share of each theme among cards from before 1920 versus 1920 onwards.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": "container",
+  "height": 230,
+  "data": {
+    "url": "data/theme_shift.csv"
+  },
+  "encoding": {
+    "y": {
+      "field": "theme",
+      "type": "nominal",
+      "title": null,
+      "sort": [
+        "Exhibition Building",
+        "War & service",
+        "Migration",
+        "Everyday correspondence",
+        "Other"
+      ],
+      "axis": {
+        "domain": false,
+        "ticks": false,
+        "labelPadding": 8
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "color": "#b9ad97",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "field": "share",
+          "type": "quantitative",
+          "aggregate": "min"
+        },
+        "x2": {
+          "field": "share",
+          "aggregate": "max"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 160,
+        "opacity": 1,
+        "stroke": "#fbf7ef",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "x": {
+          "field": "share",
+          "type": "quantitative",
+          "title": "Share of dated postcards (%)",
+          "scale": {
+            "domain": [
+              0,
+              50
+            ]
+          },
+          "axis": {
+            "tickCount": 5
+          }
+        },
+        "color": {
+          "field": "era",
+          "type": "nominal",
+          "title": null,
+          "scale": {
+            "domain": [
+              "Before 1920",
+              "1920 onwards"
+            ],
+            "range": [
+              "#9b2c2c",
+              "#1a66a8"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "theme",
+            "title": "Theme"
+          },
+          {
+            "field": "era",
+            "title": "Period"
+          },
+          {
+            "field": "share",
+            "type": "quantitative",
+            "title": "Share (%)"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -14,
+        "fontSize": 11,
+        "color": "#6e6253"
+      },
+      "encoding": {
+        "x": {
+          "field": "share",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "share",
+          "type": "quantitative",
+          "format": ".0f"
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}

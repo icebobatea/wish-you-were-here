@@ -1,0 +1,115 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Bar chart: number of postcards in each museum collection (top 8).",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": "container",
+  "height": 250,
+  "data": {
+    "url": "data/collections.csv"
+  },
+  "encoding": {
+    "y": {
+      "field": "collection",
+      "type": "nominal",
+      "title": null,
+      "sort": "-x",
+      "axis": {
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "x": {
+      "field": "postcards",
+      "type": "quantitative",
+      "title": "Postcards",
+      "axis": {
+        "grid": true,
+        "tickCount": 5
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "cornerRadiusEnd": 4,
+        "height": {
+          "band": 0.7
+        }
+      },
+      "encoding": {
+        "color": {
+          "condition": {
+            "test": "datum.collection === 'No named collection'",
+            "value": "#cfc5b2"
+          },
+          "value": "#9b2c2c"
+        },
+        "tooltip": [
+          {
+            "field": "collection",
+            "title": "Collection"
+          },
+          {
+            "field": "postcards",
+            "type": "quantitative",
+            "title": "Postcards"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "postcards",
+          "type": "quantitative"
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}

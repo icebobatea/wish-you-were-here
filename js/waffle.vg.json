@@ -1,0 +1,113 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Waffle chart: if the collection were 100 postcards, how many of each theme.",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": {
+    "left": 40,
+    "right": 10,
+    "top": 10,
+    "bottom": 5
+  },
+  "width": 280,
+  "height": 280,
+  "data": {
+    "url": "data/waffle.csv"
+  },
+  "mark": {
+    "type": "rect",
+    "cornerRadius": 3,
+    "stroke": "#fbf7ef",
+    "strokeWidth": 3
+  },
+  "encoding": {
+    "x": {
+      "field": "col",
+      "type": "ordinal",
+      "axis": null
+    },
+    "y": {
+      "field": "row",
+      "type": "ordinal",
+      "axis": null
+    },
+    "color": {
+      "field": "theme",
+      "type": "nominal",
+      "title": "Theme",
+      "scale": {
+        "domain": [
+          "Exhibition Building",
+          "War & service",
+          "Migration",
+          "Everyday correspondence",
+          "Other"
+        ],
+        "range": [
+          "#b07d10",
+          "#9b2c2c",
+          "#1a66a8",
+          "#4a8a32",
+          "#a39a8a"
+        ]
+      },
+      "sort": [
+        "Exhibition Building",
+        "War & service",
+        "Migration",
+        "Everyday correspondence",
+        "Other"
+      ],
+      "legend": {
+        "orient": "bottom",
+        "columns": 2,
+        "title": null,
+        "columnPadding": 24,
+        "symbolType": "square"
+      }
+    },
+    "tooltip": [
+      {
+        "field": "theme",
+        "title": "Theme"
+      },
+      {
+        "field": "share",
+        "type": "quantitative",
+        "title": "Out of 100 cards"
+      }
+    ]
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Source Serif 4",
+    "axis": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "domainColor": "#b9ad97",
+      "tickColor": "#b9ad97",
+      "gridColor": "#ece4d3",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "titleFontWeight": 600,
+      "labelLimit": 280
+    },
+    "legend": {
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelLimit": 240
+    },
+    "text": {
+      "font": "Source Serif 4",
+      "color": "#3b3226"
+    }
+  }
+}
