@@ -1,0 +1,14 @@
+country_from,country_to,postcards,place_from,lon_from,lat_from,place_to,lon_to,lat_to
+Australia,England,3,Melbourne,144.96,-37.81,London,-0.13,51.51
+Australia,Scotland,52,Melbourne,144.96,-37.81,Paisley,-4.42,55.85
+Australia,United States of America,3,Melbourne,144.96,-37.81,USA,-98.0,39.0
+Egypt,Greece,1,Cairo,31.24,30.04,Athens,23.73,37.98
+France,Scotland,1,Paris,2.35,48.86,Paisley,-4.42,55.85
+Greece,Australia,1,Athens,23.73,37.98,Melbourne,144.96,-37.81
+India,Scotland,2,India,78.9,22.0,Paisley,-4.42,55.85
+New Guinea,United States of America,1,New Guinea,145.0,-6.3,USA,-98.0,39.0
+New Zealand,England,1,Wellington,174.78,-41.29,London,-0.13,51.51
+Nigeria,Scotland,2,Nigeria,8.7,9.1,Paisley,-4.42,55.85
+Ottoman Empire,Greece,1,Ottoman Empire,35.2,39.0,Athens,23.73,37.98
+Singapore,Scotland,1,Singapore,103.82,1.35,Paisley,-4.42,55.85
+South Africa,England,2,Cape Town,18.42,-33.92,London,-0.13,51.51
