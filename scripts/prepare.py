@@ -15,6 +15,7 @@ Output: data/postcards.csv           one row per postcard
         data/theme_span.csv          year range of each theme
         data/collections.csv         postcards per museum collection
         data/flows.csv / flows.geojson  sender country -> recipient country
+        data/flow_places.csv         places at either end of a flow
         data/vic_localities.csv      postcards linked to each Victorian place
 
 Run from the repo root:  python scripts/prepare.py
@@ -176,6 +177,15 @@ def main():
         flows[f"lon_{end}"] = pts.str[1]
         flows[f"lat_{end}"] = pts.str[2]
     flows.to_csv("data/flows.csv", index=False)
+    # Places at either end of a flow, with cards sent and received (for map labels)
+    ends = pd.concat([
+        flows.rename(columns={"place_from": "place", "lon_from": "lon", "lat_from": "lat"})
+             .assign(sent=flows["postcards"], received=0)[["place", "lon", "lat", "sent", "received"]],
+        flows.rename(columns={"place_to": "place", "lon_to": "lon", "lat_to": "lat"})
+             .assign(sent=0, received=flows["postcards"])[["place", "lon", "lat", "sent", "received"]],
+    ]).groupby(["place", "lon", "lat"], as_index=False)[["sent", "received"]].sum()
+    ends.to_csv("data/flow_places.csv", index=False)
+
     # Same flows as GeoJSON lines so the map draws them as great-circle routes
     feats = []
     for rec in flows.to_dict("records"):
