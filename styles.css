@@ -5,7 +5,8 @@
   --muted: #6e6253;
   --rule: #d9cdb5;
   --stamp: #9b2c2c;
-  --gold: #c08a1e;
+  --gold: #b07d10;
+  --page: 1240px;
 }
 
 * { box-sizing: border-box; }
@@ -24,14 +25,19 @@ body {
 .hero,
 main,
 footer {
-  max-width: 960px;
+  max-width: var(--page);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 32px;
 }
 
+/* ---------- hero: title on the left, key numbers on the right ---------- */
 .hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: end;
   padding-top: 72px;
-  padding-bottom: 40px;
+  padding-bottom: 48px;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -54,70 +60,139 @@ h1, h2, h3 {
   margin: 0 0 12px;
 }
 
-h1 { font-size: clamp(40px, 7vw, 72px); font-weight: 800; }
-h2 { font-size: clamp(26px, 3.5vw, 34px); font-weight: 600; }
+h1 { font-size: clamp(44px, 7vw, 80px); font-weight: 800; }
+h2 { font-size: clamp(28px, 3.5vw, 38px); font-weight: 600; margin-bottom: 24px; }
 h3 { font-size: 20px; }
 
-.lede {
-  max-width: 64ch;
-  font-size: 20px;
-  color: var(--muted);
-  margin: 0;
+.lede { font-size: 21px; color: var(--muted); margin: 0; }
+
+.postmark {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--rule);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0 var(--card);
 }
 
+.postmark div {
+  background: var(--paper);
+  padding: 16px 18px;
+}
+
+.postmark strong {
+  display: block;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 34px;
+  line-height: 1.1;
+  color: var(--stamp);
+}
+
+.postmark span { font-size: 14px; color: var(--muted); line-height: 1.35; display: block; }
+
+/* ---------- sections: text column beside each chart ---------- */
 section {
-  padding: 56px 0;
+  padding: 56px 0 24px;
   border-bottom: 1px solid var(--rule);
 }
 
-section > p { max-width: 64ch; }
+.row {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 2.4fr);
+  gap: 40px;
+  align-items: start;
+  margin-bottom: 40px;
+}
+
+.row .text { position: sticky; top: 24px; }
+
+.row .text p { margin: 0 0 16px; }
+
+.how {
+  font-size: 15px;
+  color: var(--muted);
+  border-left: 3px solid var(--gold);
+  padding-left: 12px;
+  font-style: italic;
+}
+
+.callouts { list-style: none; padding: 0; margin: 0; }
+
+.callouts li { margin: 0 0 12px; padding-left: 34px; position: relative; }
+
+.callouts b {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 24px;
+  height: 24px;
+  border: 2px dashed var(--ink);
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 20px;
+  text-align: center;
+}
 
 figure {
-  margin: 24px 0 0;
+  margin: 0;
   padding: 20px;
   background: var(--card);
-  border-radius: 4px;
+  border-radius: 6px;
+  min-width: 0;
 }
+
+figure.center .chart, figure.center > div:first-child { display: flex; justify-content: center; }
 
 .chart { width: 100%; overflow-x: auto; }
 
 figcaption {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* zoom slider and view buttons that Vega adds under the maps */
+.vega-bindings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
   margin-top: 8px;
   font-size: 14px;
   color: var(--muted);
 }
 
+.vega-bind { display: flex; align-items: center; gap: 6px; }
+
+.vega-bind input[type="range"] { accent-color: var(--stamp); width: 160px; }
+
+.vega-bind input[type="radio"] { accent-color: var(--stamp); }
+
+.vega-bind-name { font-weight: 600; color: var(--ink); }
+
+/* ---------- footer ---------- */
 footer {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 48px;
   padding-top: 40px;
   padding-bottom: 64px;
   font-size: 15px;
   color: var(--muted);
 }
 
-footer p { max-width: 72ch; }
-
 a { color: var(--stamp); }
+
+/* ---------- narrow screens: stack everything ---------- */
+@media (max-width: 900px) {
+  .hero, .row, footer { grid-template-columns: 1fr; gap: 24px; }
+  .row .text { position: static; }
+}
 
 @media (max-width: 600px) {
   body { font-size: 17px; }
   .hero, main, footer { padding-left: 16px; padding-right: 16px; }
   figure { padding: 12px; }
-}
-
-.split {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 32px;
-  align-items: center;
-  margin: 24px 0;
-}
-
-.split figure { margin: 0; }
-
-.split p { max-width: 40ch; }
-
-#waffle { max-width: 100%; overflow: hidden; }
-
-@media (max-width: 760px) {
-  .split { grid-template-columns: 1fr; }
+  .postmark strong { font-size: 28px; }
 }

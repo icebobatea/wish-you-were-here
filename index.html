@@ -6,7 +6,7 @@
   <title>Wish You Were Here — A Century of Victorian Postcards</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Special+Elite&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
@@ -14,115 +14,193 @@
 </head>
 <body>
   <header class="hero">
-    <p class="stamp">Melbourne · 1880–2015</p>
-    <h1>Wish You Were Here</h1>
-    <p class="lede">Before phones had cameras, a postcard was how you showed someone where you were. Museums Victoria keeps nearly a thousand of them — souvenirs of a grand exhibition, notes from soldiers in the desert, and messages from migrants to the families they left behind. Here is what they tell us.</p>
+    <div class="hero-text">
+      <p class="stamp">Museums Victoria · 1870s–2010s</p>
+      <h1>Wish You Were Here</h1>
+      <p class="lede">A century before the selfie, you proved you'd been somewhere by posting a picture of it. Museums Victoria holds nearly a thousand of those pictures. Read together, they trace who Victorians were, where they came from, and who they wrote home to.</p>
+    </div>
+    <aside class="postmark" aria-label="Collection at a glance">
+      <div><strong>946</strong><span>postcards in the collection</span></div>
+      <div><strong>22</strong><span>countries pictured on them</span></div>
+      <div><strong>52</strong><span>cards the Flinns of Melbourne sent to Scotland</span></div>
+      <div><strong>7 in 10</strong><span>dated cards from just 1900–1919</span></div>
+    </aside>
   </header>
 
   <main>
     <section id="where">
       <h2>Where the postcards take us</h2>
-      <p>Most of the cards picture Australia, and most of those picture one building: Melbourne's Royal Exhibition Building. But a second cluster sits half a world away, in Egypt and Iraq. These are the postcards Australian soldiers bought and sent home during the First World War.</p>
-      <figure>
-        <div id="depicted_map" class="chart"></div>
-        <figcaption>Circle size shows how many postcards depict each country. Colour shows the most common theme there. Hover for details.</figcaption>
-      </figure>
+      <div class="row">
+        <div class="text">
+          <p>Pick a card at random from the museum's drawers and it will most likely show one building: Melbourne's Royal Exhibition Building. It was built for the 1880 International Exhibition, and in 1901 Australia's first Parliament opened under its dome. Souvenir printers never tired of it.</p>
+          <p>The second cluster is stranger. Egypt and Iraq are almost all soldiers' cards. The Peile brothers filled an album with views of Heliopolis while camped near Cairo in 1914–16, and another soldier kept a set of monitor ships on the Tigris.</p>
+          <p class="how">Drag to pan, use the zoom slider (or pinch / ctrl+scroll), double-click to reset. Click a theme in the legend to show only those cards.</p>
+        </div>
+        <figure>
+          <div id="depicted_map" class="chart"></div>
+          <figcaption>Each circle is a country pictured on the cards, sized by how many cards show it and coloured by their most common theme.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="when">
       <h2>The golden age of the postcard</h2>
-      <p>About seven in ten dated cards in the collection come from just twenty years. Between 1900 and 1919, cheap printing and a reliable postal service made the postcard the text message of its day.</p>
-      <figure>
-        <div id="timeline" class="chart"></div>
-        <figcaption>Postcards in the collection by the earliest year they were made, sent or used. Drag across the lower strip to zoom in on a period; double-click it to reset.</figcaption>
-      </figure>
-      <p>The two spikes have different causes. The first, around 1904–1906, is mostly souvenir cards of the Exhibition Building and everyday notes between friends. The second, 1914–1916, is almost entirely the war.</p>
-      <figure>
-        <div id="heatmap" class="chart"></div>
-        <figcaption>Number of postcards in each decade, by theme. Darker cells hold more cards.</figcaption>
-      </figure>
+      <div class="row">
+        <div class="text">
+          <p>Seven in ten dated cards come from just twenty years, 1900–1919, when cards were cheap to print and cheap to post. But the spikes inside that boom have two very different causes.</p>
+          <p><strong>Real people writing.</strong> From 1904, Marion and Janet Flinn in Melbourne sent card after card to the Scott family in Paisley: Collins Street, the Town Hall, the Black Spur. Their 52 cards make up most of the museum's "everyday correspondence".</p>
+          <p><strong>Curators guessing.</strong> An undated card gets a best estimate such as "circa 1905" or "1916–1919", and the guesses pile onto one year. 77 of the 96 cards dated 1905 are estimates, so treat the tallest bars as rough.</p>
+        </div>
+        <figure>
+          <div id="timeline" class="chart"></div>
+          <figcaption>Postcards by the earliest year they were made, sent or used, coloured by theme. Click a theme to highlight it; drag across the lower strip to zoom.</figcaption>
+        </figure>
+      </div>
+      <div class="row">
+        <div class="text">
+          <p>Spread over decades, each theme has its own moment:</p>
+          <ol class="callouts">
+            <li><b>A</b> The Flinns' cards to Paisley, 1904–07.</li>
+            <li><b>B</b> 306 soldiers' cards, 184 of them from the RSL's collection.</li>
+            <li><b>C</b> Cards bought on the voyage out after the war, in Algiers and Ceylon in 1951.</li>
+            <li><b>D</b> Protest cards such as Avant Card's "Refugee Week" (2004). Migration is still on postcards, now as politics.</li>
+          </ol>
+        </div>
+        <figure>
+          <div id="heatmap" class="chart"></div>
+          <figcaption>Postcards per decade and theme. Darker cells hold more cards; hover for exact counts.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="what">
       <h2>What they showed</h2>
-      <div class="split">
-        <div>
-          <p>If the whole collection were shrunk to 100 postcards, a third would be from soldiers and about one in five would show the Exhibition Building.</p>
-          <p>Themes come from how the museum itself catalogued each card.</p>
+      <div class="row">
+        <div class="text">
+          <p>Shrink the whole collection to 100 cards and 35 come from soldiers. 19 show the Exhibition Building, 15 belong to migrants, and only 8 are ordinary letters between friends.</p>
+          <p>Themes follow the museum's own catalogue, so they tell us why a card was kept as much as what it shows.</p>
         </div>
-        <figure>
+        <figure class="center">
           <div id="waffle"></div>
-          <figcaption>Each square is one in every hundred postcards.</figcaption>
+          <figcaption>Each square is one in every hundred cards. Click the legend to pick out a theme.</figcaption>
         </figure>
       </div>
-      <p>After 1920 the mix changes completely. War cards almost disappear, and migration takes their place: shipping-line cards, souvenirs of the voyage out, and later, protest cards about refugees.</p>
-      <figure>
-        <div id="dumbbell" class="chart"></div>
-        <figcaption>Share of each theme among dated cards made before 1920 (red) and from 1920 onwards (blue).</figcaption>
-      </figure>
-      <p>A caution before reading too much into this. A museum keeps what people donate. Over a third of the cards belong to no named collection, and most of the rest came in a few large donations from the RSL and the Exhibition Building's own archive.</p>
-      <figure>
-        <div id="collections" class="chart"></div>
-        <figcaption>Postcards in the eight largest groupings. Grey marks cards that are not part of a named collection.</figcaption>
-      </figure>
+      <div class="row">
+        <div class="text">
+          <p>Then 1920 flips the collection over. War cards fall from almost half to one in twenty: the soldiers came home, and with them went the reason to buy cards in Cairo.</p>
+          <p>Migration rises by 32 points. Across the middle of the century, and especially after the 1947 migration scheme, ships brought hundreds of thousands of new Victorians. The cards they bought on the way are what the museum now holds.</p>
+        </div>
+        <figure>
+          <div id="dumbbell" class="chart"></div>
+          <figcaption>Share of each theme among cards from before 1920 (red) and from 1920 on (blue). The right-hand column gives the change in percentage points.</figcaption>
+        </figure>
+      </div>
+      <div class="row">
+        <div class="text">
+          <p>A warning before trusting any of this. A museum holds what people give it. For four in ten cards we don't know who donated them, and a few big gifts dominate: the RSL's war cards and the Exhibition Building's own archive.</p>
+          <p>So this is a portrait of what Victorians chose to keep, not of every card ever posted.</p>
+        </div>
+        <figure>
+          <div id="collections" class="chart"></div>
+          <figcaption>Postcards in the eight largest groupings. Grey marks cards with no named collection.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="front">
       <h2>Postcards from the front</h2>
-      <p>Soldiers' cards span from the 1870s to the 1940s, but half of them were made in just three years, 1914 to 1916. Exhibition souvenirs cluster just as tightly in the decade after Federation, while migration cards spread across the whole twentieth century.</p>
-      <figure>
-        <div id="theme_span" class="chart"></div>
-        <figcaption>Thin line: earliest to latest dated card in each theme. Thick bar: the years containing the middle half of its cards.</figcaption>
-      </figure>
-      <p>Away from home, almost every place on a card is somewhere Australian troops served: the camps around Cairo, the Mesopotamian campaign in Iraq, the hospitals of England, and the Western Front.</p>
-      <figure>
-        <div id="depicted_by_theme" class="chart"></div>
-        <figcaption>Overseas countries most often pictured on the cards, split by theme. Australia (288 cards) is left out so the overseas places can be compared.</figcaption>
-      </figure>
+      <div class="row">
+        <div class="text">
+          <p>Each theme has a heartbeat. War cards stretch from the 1870s to the 1940s, yet half of them fall inside 1914–1916. Exhibition souvenirs crowd the decade after Parliament sat in the building. Migration cards beat slowly from the 1920s to the late 1950s, the age of the migrant ship.</p>
+        </div>
+        <figure>
+          <div id="theme_span" class="chart"></div>
+          <figcaption>Thin line: earliest to latest card in each theme. Thick bar: the years holding the middle half of its cards. Dashed lines mark events that shaped them.</figcaption>
+        </figure>
+      </div>
+      <div class="row">
+        <div class="text">
+          <p>Away from home, the places on the cards trace where soldiers served. Two collections fill most of this chart: one family's album from the camps outside Cairo, and one set from the Mesopotamian campaign along the Tigris.</p>
+          <p>Britain is different. It turns up under almost every theme, because it was where so many Victorians' families still lived.</p>
+        </div>
+        <figure>
+          <div id="depicted_by_theme" class="chart"></div>
+          <figcaption>Overseas countries most often pictured, split by theme. Australia (288 cards) is left out so the rest can be compared. Click a theme to highlight it.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="home">
       <h2>Sent home</h2>
-      <p>Some cards record who sent them and to whom. Most international ones go one way, from Australia back to Britain. Fifty-two went to Scotland, most of them written by Marion and Janet Flinn in Melbourne to J. B. Scott in Paisley: picture cards of a new country, sent home between 1904 and 1907.</p>
-      <figure>
-        <div id="flow_map" class="chart"></div>
-        <figcaption>Line thickness shows how many cards were sent along each route. Places are approximate (city or country).</figcaption>
-      </figure>
-      <p>Why Scotland? In 1911, one Victorian in seven had been born overseas, and most of them in Britain or Ireland. For them, a postcard was the cheapest way to show the family back home what their new life looked like.</p>
-      <figure>
-        <div id="birthplace_map" class="chart"></div>
-        <figcaption>Victorians born in each country at the 1911 census. The colour scale is logarithmic, so each step is ten times the last. Britain combines England, Scotland and Wales; small islands and colonies are not shown.</figcaption>
-      </figure>
-      <p>That pattern did not last. British and Irish birthplaces dominated until the Second World War. Then came a wave from Italy and Greece, the same years migration cards take over the collection. By 2011, India and China had overtaken them both.</p>
-      <figure>
-        <div id="birthplace_trend" class="chart"></div>
-        <figcaption>Victorians born in each country at every census from 1901 to 2011. Hover a line for exact figures.</figcaption>
-      </figure>
+      <div class="row">
+        <div class="text">
+          <p>When a card records who sent it and to whom, the arrows almost all point one way: back to Britain. Fifty-two cards went from Australia to Scotland, most of them written by Marion and Janet Flinn to the Scotts in Paisley, picture cards of Melbourne and the Victorian bush written between 1904 and 1907.</p>
+          <p class="how">Hover an arrow for its route; drag and zoom as on the first map.</p>
+        </div>
+        <figure>
+          <div id="flow_map" class="chart"></div>
+          <figcaption>Arrow thickness shows how many cards travelled along each route. Places are approximate (city or country).</figcaption>
+        </figure>
+      </div>
+      <div class="row">
+        <div class="text">
+          <p>Why Scotland? In 1911 one Victorian in seven had been born overseas, and most of those in Britain or Ireland. For them a penny postcard was the cheapest way to show the family what the new life looked like.</p>
+          <p>The surprise is China. Over 4,000 Chinese-born Victorians were still here in 1911, the last of the gold-rush miners, their numbers shrinking under the 1901 Immigration Restriction Act.</p>
+        </div>
+        <figure>
+          <div id="birthplace_map" class="chart"></div>
+          <figcaption>Victorians born in each country at the 1911 census. The colour scale is logarithmic (each step is ten times the last). Britain combines England, Scotland and Wales.</figcaption>
+        </figure>
+      </div>
+      <div class="row">
+        <div class="text">
+          <p>The same waves run through the postcards. British and Irish birthplaces fade as the gold-rush generation dies out. After 1947, Italy and Greece surge, the same years migrant-voyage cards fill the collection.</p>
+          <p>After the White Australia policy ended in 1973, Asia slowly takes over. By 2011 more Victorians were born in India than in Italy. The museum's newest migration cards are about refugees, not voyages.</p>
+        </div>
+        <figure>
+          <div id="birthplace_trend" class="chart"></div>
+          <figcaption>Victorians born in each country at every census, 1901–2011. Click a country in the legend to isolate its line; hover for exact figures.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="near">
       <h2>Close to home</h2>
-      <p>Inside Victoria the cards cluster around central Melbourne and its inner suburbs. The one big exception is Walhalla, a gold-mining town in the Gippsland ranges, captured in a set of 36 cards in the museum's Rodda Collection.</p>
-      <figure>
-        <div id="vic_map" class="chart"></div>
-        <figcaption>Victorian places linked to a postcard: where it was made, sent, used or what it pictures. Hover a circle for its name.</figcaption>
-      </figure>
+      <div class="row">
+        <div class="text">
+          <p>Inside Victoria, the cards pile up on central Melbourne and its inner suburbs, mostly souvenirs of the city itself.</p>
+          <p>The big exception sits in the Gippsland ranges: Walhalla, a gold-mining town that once held thousands. Its railway arrived only in 1910, a few years before the last big mine closed. The 36 cards in the Rodda Collection catch a town at its final peak, before it emptied.</p>
+          <p class="how">Switch between the Victoria and Melbourne views below the map, or zoom in; more place names appear as you zoom.</p>
+        </div>
+        <figure>
+          <div id="vic_map" class="chart"></div>
+          <figcaption>Victorian places linked to a card: where it was made, sent or used, or what it pictures. Circle size is the number of cards; colour is their most common theme.</figcaption>
+        </figure>
+      </div>
     </section>
   </main>
 
   <footer>
-    <h3>About this page</h3>
-    <p><strong>Data:</strong> <a href="https://collections.museumsvictoria.com.au/developers">Museums Victoria Collections API</a> (946 item records matching "postcard", CC BY 4.0). Birthplaces: <a href="https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/3105.0.65.0012014">ABS, Australian Historical Population Statistics 2014 (3105.0.65.001)</a>, Country of Birth tables 8.7–8.23, Victoria. Suburb locations: <a href="https://github.com/matthewproctor/australianpostcodes">Australian Postcodes</a>. Base maps: <a href="https://www.naturalearthdata.com/">Natural Earth</a> and <a href="https://github.com/rowanhogan/australian-states">Australian state boundaries</a>. Country positions are approximate centroids.</p>
-    <p><strong>Note:</strong> this shows what one museum chose to keep, not every postcard ever sent. The large number of Exhibition Building cards reflects that the building is a Museums Victoria venue.</p>
-    <p><strong>Author:</strong> Paul · FIT3179 Data Visualisation, Monash University · October 2026. Built with Vega-Lite; AI tools were used to assist with data preparation and code.</p>
+    <div>
+      <h3>About the data</h3>
+      <p><a href="https://collections.museumsvictoria.com.au/developers">Museums Victoria Collections API</a>: 946 item records matching "postcard" (CC BY 4.0). Birthplaces: <a href="https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/3105.0.65.0012014">ABS, Australian Historical Population Statistics 2014 (3105.0.65.001)</a>, Country of Birth tables 8.7–8.23, Victoria. Suburb locations: <a href="https://github.com/matthewproctor/australianpostcodes">Australian Postcodes</a>. Base maps: <a href="https://www.naturalearthdata.com/">Natural Earth</a> and <a href="https://github.com/rowanhogan/australian-states">Australian state boundaries</a>.</p>
+      <p>This is what one museum chose to keep, not every postcard ever sent. Dates are the earliest year recorded for each card, and many are curators' estimates.</p>
+    </div>
+    <div>
+      <h3>About this page</h3>
+      <p>Paul · FIT3179 Data Visualisation, Monash University · October 2026.</p>
+      <p>Built with Vega-Lite and Vega. AI tools were used to assist with data preparation and code.</p>
+    </div>
   </footer>
 
   <script>
-    const opts = {actions: false, renderer: "svg"};
     const charts = ["depicted_map", "timeline", "heatmap", "waffle", "dumbbell", "collections",
                     "theme_span", "depicted_by_theme", "flow_map", "birthplace_map",
                     "birthplace_trend", "vic_map"];
-    charts.forEach(id => vegaEmbed("#" + id, "js/" + id + ".vg.json", opts));
+    // wait for the web fonts so Vega measures labels with the right font
+    document.fonts.ready.then(() => {
+      charts.forEach(id => vegaEmbed("#" + id, "js/" + id + ".vg.json", {actions: false, renderer: "svg"}));
+    });
   </script>
 </body>
 </html>
