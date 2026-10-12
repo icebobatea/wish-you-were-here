@@ -1,206 +1,506 @@
 {
-  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Proportional symbol map: where the postcards in the Museums Victoria collection depict.",
-  "autosize": {
-    "type": "fit",
-    "contains": "padding",
-    "resize": true
-  },
-  "width": "container",
-  "height": 440,
-  "projection": {
-    "type": "equalEarth",
-    "rotate": [
-      -60,
-      0,
-      0
-    ]
-  },
-  "layer": [
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Zoomable proportional symbol map: countries pictured on postcards in the Museums Victoria collection.",
+  "autosize": "none",
+  "padding": 0,
+  "signals": [
     {
-      "data": {
-        "url": "data/ne_110m_admin_0_countries.topojson",
-        "format": {
-          "type": "topojson",
-          "feature": "ne_110m_admin_0_countries"
+      "name": "width",
+      "init": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760",
+      "on": [
+        {
+          "events": "window:resize",
+          "update": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760"
+        }
+      ]
+    },
+    {
+      "name": "height",
+      "update": "max(300, min(470, round(width * 0.603)))"
+    },
+    {
+      "name": "zoom",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 1,
+        "max": 10,
+        "step": 0.1,
+        "name": "Zoom "
+      },
+      "on": [
+        {
+          "events": {
+            "type": "wheel",
+            "consume": true,
+            "filter": "event.ctrlKey"
+          },
+          "update": "clamp(zoom * pow(1.003, -event.deltaY), 1, 10)"
+        },
+        {
+          "events": "dblclick",
+          "update": "1"
+        }
+      ]
+    },
+    {
+      "name": "angles",
+      "value": [
+        0,
+        0
+      ],
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "[rotateX, centerY]"
+        }
+      ]
+    },
+    {
+      "name": "cloned",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "copy('projection')"
+        }
+      ]
+    },
+    {
+      "name": "start",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "invert(cloned, xy())"
+        }
+      ]
+    },
+    {
+      "name": "drag",
+      "value": null,
+      "on": [
+        {
+          "events": "[pointerdown, window:pointerup] > window:pointermove",
+          "update": "invert(cloned, xy())"
+        }
+      ]
+    },
+    {
+      "name": "delta",
+      "value": null,
+      "on": [
+        {
+          "events": {
+            "signal": "drag"
+          },
+          "update": "[drag[0] - start[0], start[1] - drag[1]]"
+        }
+      ]
+    },
+    {
+      "name": "rotateX",
+      "value": -60,
+      "on": [
+        {
+          "events": {
+            "signal": "delta"
+          },
+          "update": "angles[0] + delta[0]"
+        },
+        {
+          "events": "dblclick",
+          "update": "-60"
+        }
+      ]
+    },
+    {
+      "name": "centerY",
+      "value": 10,
+      "on": [
+        {
+          "events": {
+            "signal": "delta"
+          },
+          "update": "clamp(angles[1] + delta[1], -70, 70)"
+        },
+        {
+          "events": "dblclick",
+          "update": "10"
+        }
+      ]
+    },
+    {
+      "name": "pick",
+      "value": null,
+      "on": [
+        {
+          "events": "@legendSymbol:click, @legendLabel:click",
+          "update": "pick === datum.value ? null : datum.value",
+          "force": true
+        },
+        {
+          "events": "dblclick",
+          "update": "null"
+        }
+      ]
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "type": "equalEarth",
+      "scale": {
+        "signal": "width / 5.4 * zoom"
+      },
+      "rotate": [
+        {
+          "signal": "rotateX"
+        },
+        0,
+        0
+      ],
+      "center": [
+        0,
+        {
+          "signal": "centerY"
+        }
+      ],
+      "translate": [
+        {
+          "signal": "width / 2"
+        },
+        {
+          "signal": "height / 2"
+        }
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "world",
+      "url": "data/ne_110m_admin_0_countries.topojson",
+      "format": {
+        "type": "topojson",
+        "feature": "ne_110m_admin_0_countries"
+      }
+    },
+    {
+      "name": "places",
+      "url": "data/depicted_countries.csv",
+      "format": {
+        "type": "csv",
+        "parse": "auto"
+      },
+      "transform": [
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": [
+            "longitude",
+            "latitude"
+          ],
+          "as": [
+            "x",
+            "y"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "labelled",
+      "source": "places",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.postcards >= 4"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "theme",
+      "type": "ordinal",
+      "domain": [
+        "Exhibition Building",
+        "War & service",
+        "Migration",
+        "Everyday correspondence",
+        "Other"
+      ],
+      "range": [
+        "#b07d10",
+        "#9b2c2c",
+        "#1a66a8",
+        "#4a8a32",
+        "#a39a8a"
+      ]
+    },
+    {
+      "name": "size",
+      "type": "sqrt",
+      "domain": [
+        1,
+        300
+      ],
+      "range": [
+        30,
+        2400
+      ],
+      "zero": false
+    }
+  ],
+  "legends": [
+    {
+      "fill": "theme",
+      "title": "Most common theme",
+      "orient": "top-left",
+      "symbolType": "circle",
+      "encode": {
+        "symbols": {
+          "name": "legendSymbol",
+          "interactive": true,
+          "update": {
+            "opacity": {
+              "signal": "!pick || pick === datum.value ? 1 : 0.3"
+            },
+            "cursor": {
+              "value": "pointer"
+            }
+          }
+        },
+        "labels": {
+          "name": "legendLabel",
+          "interactive": true,
+          "update": {
+            "opacity": {
+              "signal": "!pick || pick === datum.value ? 1 : 0.3"
+            },
+            "cursor": {
+              "value": "pointer"
+            }
+          }
+        }
+      }
+    },
+    {
+      "size": "size",
+      "title": "Postcards",
+      "orient": "bottom-left",
+      "symbolType": "circle",
+      "values": [
+        1,
+        10,
+        50,
+        250
+      ],
+      "symbolFillColor": "#b9ad97",
+      "symbolStrokeColor": "#fbf7ef"
+    }
+  ],
+  "marks": [
+    {
+      "type": "shape",
+      "from": {
+        "data": "world"
+      },
+      "clip": true,
+      "encode": {
+        "enter": {
+          "fill": {
+            "value": "#e6dcc6"
+          },
+          "stroke": {
+            "value": "#fbf7ef"
+          },
+          "strokeWidth": {
+            "value": 0.6
+          }
         }
       },
-      "mark": {
-        "type": "geoshape",
-        "fill": "#e9e1cf",
-        "stroke": "#fbf7ef",
-        "strokeWidth": 0.6
-      }
+      "transform": [
+        {
+          "type": "geoshape",
+          "projection": "projection"
+        }
+      ]
     },
     {
-      "data": {
-        "url": "data/depicted_countries.csv"
+      "type": "symbol",
+      "name": "dots",
+      "from": {
+        "data": "places"
       },
-      "mark": {
-        "type": "circle",
-        "opacity": 0.85,
-        "stroke": "#fbf7ef",
-        "strokeWidth": 1
-      },
-      "encoding": {
-        "longitude": {
-          "field": "longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "latitude",
-          "type": "quantitative"
-        },
-        "size": {
-          "field": "postcards",
-          "type": "quantitative",
-          "title": "Postcards",
-          "scale": {
-            "type": "sqrt",
-            "range": [
-              30,
-              2600
-            ]
+      "clip": true,
+      "encode": {
+        "enter": {
+          "shape": {
+            "value": "circle"
           },
-          "legend": {
-            "values": [
-              1,
-              10,
-              50,
-              250
-            ],
-            "orient": "bottom-left",
-            "symbolFillColor": "#b9ad97"
+          "stroke": {
+            "value": "#fbf7ef"
+          },
+          "strokeWidth": {
+            "value": 1.5
+          },
+          "cursor": {
+            "value": "pointer"
+          },
+          "size": {
+            "scale": "size",
+            "field": "postcards"
+          },
+          "fill": {
+            "scale": "theme",
+            "field": "top_theme"
+          },
+          "tooltip": {
+            "signal": "{'Place pictured': datum.country, 'Postcards': datum.postcards, 'Most common theme': datum.top_theme}"
           }
         },
-        "color": {
-          "field": "top_theme",
-          "type": "nominal",
-          "title": "Most common theme",
-          "scale": {
-            "domain": [
-              "Exhibition Building",
-              "War & service",
-              "Migration",
-              "Everyday correspondence",
-              "Other"
-            ],
-            "range": [
-              "#b07d10",
-              "#9b2c2c",
-              "#1a66a8",
-              "#4a8a32",
-              "#a39a8a"
-            ]
+        "update": {
+          "x": {
+            "field": "x"
           },
-          "legend": {
-            "orient": "top-left",
-            "labelLimit": 240
+          "y": {
+            "field": "y"
+          },
+          "opacity": {
+            "signal": "!pick || pick === datum.top_theme ? 0.9 : 0.12"
+          },
+          "stroke": {
+            "value": "#fbf7ef"
           }
         },
-        "tooltip": [
-          {
-            "field": "country",
-            "type": "nominal",
-            "title": "Place depicted"
-          },
-          {
-            "field": "postcards",
-            "type": "quantitative",
-            "title": "Postcards"
-          },
-          {
-            "field": "top_theme",
-            "type": "nominal",
-            "title": "Most common theme"
+        "hover": {
+          "stroke": {
+            "value": "#3b3226"
           }
-        ]
-      }
-    },
-    {
-      "data": {
-        "values": [
-          {
-            "longitude": 38,
-            "latitude": 12,
-            "label": "Egypt & Iraq: soldiers' cards from WWI"
-          }
-        ]
-      },
-      "mark": {
-        "type": "text",
-        "font": "Source Serif 4",
-        "fontSize": 12,
-        "fontStyle": "italic",
-        "fill": "#3b3226",
-        "align": "center",
-        "dy": 0
-      },
-      "encoding": {
-        "longitude": {
-          "field": "longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "latitude",
-          "type": "quantitative"
-        },
-        "text": {
-          "field": "label"
         }
       }
     },
     {
-      "data": {
-        "values": [
-          {
-            "longitude": 134.5,
-            "latitude": -25.7,
-            "label": "Mostly Melbourne's Exhibition Building"
+      "type": "text",
+      "name": "place_labels_halo",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fontSize": {
+            "value": 12
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "fill": {
+            "value": "#f4ecdb"
+          },
+          "stroke": {
+            "value": "#f4ecdb"
+          },
+          "strokeWidth": {
+            "value": 4
+          },
+          "strokeJoin": {
+            "value": "round"
           }
-        ]
-      },
-      "mark": {
-        "type": "text",
-        "font": "Source Serif 4",
-        "fontSize": 12,
-        "fontStyle": "italic",
-        "fill": "#3b3226",
-        "align": "center",
-        "dy": -40
-      },
-      "encoding": {
-        "longitude": {
-          "field": "longitude",
-          "type": "quantitative"
         },
-        "latitude": {
-          "field": "latitude",
-          "type": "quantitative"
-        },
-        "text": {
-          "field": "label"
+        "update": {
+          "x": {
+            "signal": "datum.x + sqrt(scale('size', datum.postcards)) / 2"
+          },
+          "y": {
+            "field": "y"
+          },
+          "text": {
+            "signal": "datum.postcards >= 4 ? datum.country : ''"
+          }
+        }
+      },
+      "transform": [
+        {
+          "type": "label",
+          "avoidMarks": [
+            "dots"
+          ],
+          "size": {
+            "signal": "[width, height]"
+          },
+          "anchor": [
+            "right",
+            "top-right",
+            "bottom-right"
+          ],
+          "offset": [
+            3,
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "place_labels",
+      "from": {
+        "data": "place_labels_halo"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "update": {
+          "x": {
+            "field": "x"
+          },
+          "y": {
+            "field": "y"
+          },
+          "text": {
+            "field": "text"
+          },
+          "align": {
+            "field": "align"
+          },
+          "baseline": {
+            "field": "baseline"
+          },
+          "opacity": {
+            "field": "opacity"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "fill": {
+            "value": "#3b3226"
+          }
         }
       }
     }
   ],
   "config": {
-    "view": {
-      "stroke": null
+    "background": "transparent",
+    "text": {
+      "font": "Source Serif 4",
+      "fill": "#3b3226"
     },
-    "font": "Source Serif 4",
     "legend": {
+      "labelFont": "Source Serif 4",
+      "titleFont": "Source Serif 4",
       "labelFontSize": 12,
       "titleFontSize": 12,
+      "labelColor": "#3b3226",
       "titleColor": "#3b3226",
-      "labelColor": "#3b3226"
-    },
-    "background": "transparent"
-  },
-  "padding": {
-    "left": 10,
-    "right": 10,
-    "top": 10,
-    "bottom": 5
+      "fillColor": "#f4ecdbe6",
+      "padding": 8,
+      "cornerRadius": 4,
+      "labelLimit": 220
+    }
   }
 }

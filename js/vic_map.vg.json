@@ -1,359 +1,533 @@
 {
-  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Dot maps: Victorian places linked to postcards (sent from, made in or depicted), statewide and in Melbourne.",
-  "autosize": {
-    "type": "fit",
-    "contains": "padding",
-    "resize": true
-  },
-  "padding": {
-    "left": 40,
-    "right": 10,
-    "top": 10,
-    "bottom": 5
-  },
-  "hconcat": [
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Zoomable dot map: Victorian places linked to postcards (made, sent, used or pictured).",
+  "autosize": "none",
+  "padding": 0,
+  "signals": [
     {
-      "title": {
-        "text": "Victoria",
-        "fontSize": 13,
-        "font": "Playfair Display",
-        "anchor": "start",
-        "color": "#3b3226"
-      },
-      "width": 320,
-      "height": 280,
-      "projection": {
-        "type": "mercator",
-        "center": [
-          145.5,
-          -36.6
-        ],
-        "scale": 2000,
-        "translate": [
-          160,
-          140
-        ]
-      },
-      "layer": [
+      "name": "width",
+      "init": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760",
+      "on": [
         {
-          "data": {
-            "url": "data/victoria.geojson",
-            "format": {
-              "type": "json",
-              "property": "features"
-            }
-          },
-          "mark": {
-            "type": "geoshape",
-            "fill": "#e9e1cf",
-            "stroke": "#fbf7ef",
-            "strokeWidth": 1,
-            "clip": true
-          }
-        },
-        {
-          "data": {
-            "url": "data/vic_localities.csv"
-          },
-          "mark": {
-            "type": "circle",
-            "opacity": 0.85,
-            "stroke": "#fbf7ef",
-            "strokeWidth": 1,
-            "clip": true
-          },
-          "encoding": {
-            "longitude": {
-              "field": "lon",
-              "type": "quantitative"
-            },
-            "latitude": {
-              "field": "lat",
-              "type": "quantitative"
-            },
-            "size": {
-              "field": "postcards",
-              "type": "quantitative",
-              "title": "Postcards",
-              "scale": {
-                "type": "sqrt",
-                "domain": [
-                  1,
-                  300
-                ],
-                "range": [
-                  30,
-                  1400
-                ]
-              },
-              "legend": {
-                "values": [
-                  1,
-                  10,
-                  50,
-                  300
-                ]
-              }
-            },
-            "color": {
-              "field": "top_theme",
-              "type": "nominal",
-              "title": "Most common theme",
-              "scale": {
-                "domain": [
-                  "Exhibition Building",
-                  "War & service",
-                  "Migration",
-                  "Everyday correspondence",
-                  "Other"
-                ],
-                "range": [
-                  "#b07d10",
-                  "#9b2c2c",
-                  "#1a66a8",
-                  "#4a8a32",
-                  "#a39a8a"
-                ]
-              }
-            },
-            "tooltip": [
-              {
-                "field": "place",
-                "title": "Place"
-              },
-              {
-                "field": "postcards",
-                "type": "quantitative",
-                "title": "Postcards"
-              },
-              {
-                "field": "top_theme",
-                "title": "Most common theme"
-              }
-            ]
-          }
-        },
-        {
-          "data": {
-            "url": "data/vic_localities.csv"
-          },
-          "transform": [
-            {
-              "filter": "datum.postcards >= 13"
-            }
-          ],
-          "mark": {
-            "type": "text",
-            "dy": -12,
-            "fontSize": 11,
-            "clip": true,
-            "color": "#3b3226"
-          },
-          "encoding": {
-            "longitude": {
-              "field": "lon",
-              "type": "quantitative"
-            },
-            "latitude": {
-              "field": "lat",
-              "type": "quantitative"
-            },
-            "text": {
-              "field": "place"
-            }
-          }
+          "events": "window:resize",
+          "update": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760"
         }
       ]
     },
     {
-      "title": {
-        "text": "Melbourne close-up",
-        "fontSize": 13,
-        "font": "Playfair Display",
-        "anchor": "start",
-        "color": "#3b3226"
-      },
-      "width": 320,
-      "height": 280,
-      "projection": {
-        "type": "mercator",
-        "center": [
-          145.0,
-          -37.86
+      "name": "height",
+      "update": "max(300, min(500, round(width * 0.641)))"
+    },
+    {
+      "name": "view",
+      "value": "Victoria",
+      "bind": {
+        "input": "radio",
+        "options": [
+          "Victoria",
+          "Melbourne"
         ],
-        "scale": 31000,
-        "translate": [
-          160,
-          140
-        ]
+        "name": "View "
+      }
+    },
+    {
+      "name": "zoom",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 1,
+        "max": 24,
+        "step": 0.1,
+        "name": "Zoom "
       },
-      "layer": [
+      "on": [
         {
-          "data": {
-            "url": "data/victoria.geojson",
-            "format": {
-              "type": "json",
-              "property": "features"
-            }
+          "events": {
+            "type": "wheel",
+            "consume": true,
+            "filter": "event.ctrlKey"
           },
-          "mark": {
-            "type": "geoshape",
-            "fill": "#e9e1cf",
-            "stroke": "#fbf7ef",
-            "strokeWidth": 1,
-            "clip": true
-          }
+          "update": "clamp(zoom * pow(1.003, -event.deltaY), 1, 24)"
         },
         {
-          "data": {
-            "url": "data/vic_localities.csv"
-          },
-          "mark": {
-            "type": "circle",
-            "opacity": 0.85,
-            "stroke": "#fbf7ef",
-            "strokeWidth": 1,
-            "clip": true
-          },
-          "encoding": {
-            "longitude": {
-              "field": "lon",
-              "type": "quantitative"
-            },
-            "latitude": {
-              "field": "lat",
-              "type": "quantitative"
-            },
-            "size": {
-              "field": "postcards",
-              "type": "quantitative",
-              "title": "Postcards",
-              "scale": {
-                "type": "sqrt",
-                "domain": [
-                  1,
-                  300
-                ],
-                "range": [
-                  30,
-                  1400
-                ]
-              },
-              "legend": {
-                "values": [
-                  1,
-                  10,
-                  50,
-                  300
-                ]
-              }
-            },
-            "color": {
-              "field": "top_theme",
-              "type": "nominal",
-              "title": "Most common theme",
-              "scale": {
-                "domain": [
-                  "Exhibition Building",
-                  "War & service",
-                  "Migration",
-                  "Everyday correspondence",
-                  "Other"
-                ],
-                "range": [
-                  "#b07d10",
-                  "#9b2c2c",
-                  "#1a66a8",
-                  "#4a8a32",
-                  "#a39a8a"
-                ]
-              }
-            },
-            "tooltip": [
-              {
-                "field": "place",
-                "title": "Place"
-              },
-              {
-                "field": "postcards",
-                "type": "quantitative",
-                "title": "Postcards"
-              },
-              {
-                "field": "top_theme",
-                "title": "Most common theme"
-              }
-            ]
-          }
+          "events": "dblclick",
+          "update": "view === 'Victoria' ? 1 : view === 'Melbourne' ? 11 : 1"
         },
         {
-          "data": {
-            "url": "data/vic_localities.csv"
+          "events": {
+            "signal": "view"
           },
-          "transform": [
-            {
-              "filter": "datum.postcards >= 8"
-            }
+          "update": "view === 'Victoria' ? 1 : view === 'Melbourne' ? 11 : 1"
+        }
+      ]
+    },
+    {
+      "name": "angles",
+      "value": [
+        0,
+        0
+      ],
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "[rotateX, centerY]"
+        }
+      ]
+    },
+    {
+      "name": "cloned",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "copy('projection')"
+        }
+      ]
+    },
+    {
+      "name": "start",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "invert(cloned, xy())"
+        }
+      ]
+    },
+    {
+      "name": "drag",
+      "value": null,
+      "on": [
+        {
+          "events": "[pointerdown, window:pointerup] > window:pointermove",
+          "update": "invert(cloned, xy())"
+        }
+      ]
+    },
+    {
+      "name": "delta",
+      "value": null,
+      "on": [
+        {
+          "events": {
+            "signal": "drag"
+          },
+          "update": "[drag[0] - start[0], start[1] - drag[1]]"
+        }
+      ]
+    },
+    {
+      "name": "rotateX",
+      "value": -145.3,
+      "on": [
+        {
+          "events": {
+            "signal": "delta"
+          },
+          "update": "angles[0] + delta[0]"
+        },
+        {
+          "events": "dblclick",
+          "update": "view === 'Victoria' ? -145.3 : view === 'Melbourne' ? -145.02 : -145.3"
+        },
+        {
+          "events": {
+            "signal": "view"
+          },
+          "update": "view === 'Victoria' ? -145.3 : view === 'Melbourne' ? -145.02 : -145.3"
+        }
+      ]
+    },
+    {
+      "name": "centerY",
+      "value": -36.9,
+      "on": [
+        {
+          "events": {
+            "signal": "delta"
+          },
+          "update": "clamp(angles[1] + delta[1], -70, 70)"
+        },
+        {
+          "events": "dblclick",
+          "update": "view === 'Victoria' ? -36.9 : view === 'Melbourne' ? -37.84 : -36.9"
+        },
+        {
+          "events": {
+            "signal": "view"
+          },
+          "update": "view === 'Victoria' ? -36.9 : view === 'Melbourne' ? -37.84 : -36.9"
+        }
+      ]
+    },
+    {
+      "name": "pick",
+      "value": null,
+      "on": [
+        {
+          "events": "@legendSymbol:click, @legendLabel:click",
+          "update": "pick === datum.value ? null : datum.value",
+          "force": true
+        },
+        {
+          "events": "dblclick",
+          "update": "null"
+        }
+      ]
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "type": "mercator",
+      "scale": {
+        "signal": "width / 0.2 * zoom"
+      },
+      "rotate": [
+        {
+          "signal": "rotateX"
+        },
+        0,
+        0
+      ],
+      "center": [
+        0,
+        {
+          "signal": "centerY"
+        }
+      ],
+      "translate": [
+        {
+          "signal": "width / 2"
+        },
+        {
+          "signal": "height / 2"
+        }
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "vic",
+      "url": "data/victoria.geojson",
+      "format": {
+        "type": "json",
+        "property": "features"
+      }
+    },
+    {
+      "name": "places",
+      "url": "data/vic_localities.csv",
+      "format": {
+        "type": "csv",
+        "parse": "auto"
+      },
+      "transform": [
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": [
+            "lon",
+            "lat"
           ],
-          "mark": {
-            "type": "text",
-            "dy": -12,
-            "fontSize": 11,
-            "clip": true,
-            "color": "#3b3226"
-          },
-          "encoding": {
-            "longitude": {
-              "field": "lon",
-              "type": "quantitative"
-            },
-            "latitude": {
-              "field": "lat",
-              "type": "quantitative"
-            },
-            "text": {
-              "field": "place"
-            }
+          "as": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "type": "collect",
+          "sort": {
+            "field": "postcards",
+            "order": "descending"
           }
         }
       ]
     }
   ],
-  "spacing": 24,
-  "resolve": {
-    "scale": {
-      "size": "shared",
-      "color": "shared"
+  "scales": [
+    {
+      "name": "theme",
+      "type": "ordinal",
+      "domain": [
+        "Exhibition Building",
+        "War & service",
+        "Migration",
+        "Everyday correspondence",
+        "Other"
+      ],
+      "range": [
+        "#b07d10",
+        "#9b2c2c",
+        "#1a66a8",
+        "#4a8a32",
+        "#a39a8a"
+      ]
+    },
+    {
+      "name": "size",
+      "type": "sqrt",
+      "domain": [
+        1,
+        300
+      ],
+      "range": [
+        30,
+        1800
+      ],
+      "zero": false
     }
-  },
+  ],
+  "legends": [
+    {
+      "fill": "theme",
+      "title": "Most common theme",
+      "orient": "top-right",
+      "symbolType": "circle",
+      "encode": {
+        "symbols": {
+          "name": "legendSymbol",
+          "interactive": true,
+          "update": {
+            "opacity": {
+              "signal": "!pick || pick === datum.value ? 1 : 0.3"
+            },
+            "cursor": {
+              "value": "pointer"
+            }
+          }
+        },
+        "labels": {
+          "name": "legendLabel",
+          "interactive": true,
+          "update": {
+            "opacity": {
+              "signal": "!pick || pick === datum.value ? 1 : 0.3"
+            },
+            "cursor": {
+              "value": "pointer"
+            }
+          }
+        }
+      }
+    },
+    {
+      "size": "size",
+      "title": "Postcards",
+      "orient": "bottom-right",
+      "symbolType": "circle",
+      "values": [
+        1,
+        10,
+        50,
+        300
+      ],
+      "symbolFillColor": "#b9ad97",
+      "symbolStrokeColor": "#fbf7ef"
+    }
+  ],
+  "marks": [
+    {
+      "type": "shape",
+      "from": {
+        "data": "vic"
+      },
+      "clip": true,
+      "encode": {
+        "enter": {
+          "fill": {
+            "value": "#e6dcc6"
+          },
+          "stroke": {
+            "value": "#c9bda3"
+          },
+          "strokeWidth": {
+            "value": 1
+          }
+        }
+      },
+      "transform": [
+        {
+          "type": "geoshape",
+          "projection": "projection"
+        }
+      ]
+    },
+    {
+      "type": "symbol",
+      "name": "dots",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "encode": {
+        "enter": {
+          "shape": {
+            "value": "circle"
+          },
+          "stroke": {
+            "value": "#fbf7ef"
+          },
+          "strokeWidth": {
+            "value": 1.5
+          },
+          "cursor": {
+            "value": "pointer"
+          },
+          "size": {
+            "scale": "size",
+            "field": "postcards"
+          },
+          "fill": {
+            "scale": "theme",
+            "field": "top_theme"
+          },
+          "tooltip": {
+            "signal": "{'Place': datum.place, 'Postcards': datum.postcards, 'Most common theme': datum.top_theme}"
+          }
+        },
+        "update": {
+          "x": {
+            "field": "x"
+          },
+          "y": {
+            "field": "y"
+          },
+          "opacity": {
+            "signal": "!pick || pick === datum.top_theme ? 0.9 : 0.12"
+          },
+          "stroke": {
+            "value": "#fbf7ef"
+          }
+        },
+        "hover": {
+          "stroke": {
+            "value": "#3b3226"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "name": "place_labels_halo",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fontSize": {
+            "value": 11
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "fill": {
+            "value": "#f4ecdb"
+          },
+          "stroke": {
+            "value": "#f4ecdb"
+          },
+          "strokeWidth": {
+            "value": 4
+          },
+          "strokeJoin": {
+            "value": "round"
+          }
+        },
+        "update": {
+          "x": {
+            "signal": "datum.x + sqrt(scale('size', datum.postcards)) / 2"
+          },
+          "y": {
+            "field": "y"
+          },
+          "text": {
+            "signal": "datum.postcards >= 3 || zoom > 4 ? datum.place : ''"
+          }
+        }
+      },
+      "transform": [
+        {
+          "type": "label",
+          "avoidMarks": [
+            "dots"
+          ],
+          "size": {
+            "signal": "[width, height]"
+          },
+          "anchor": [
+            "right",
+            "top-right",
+            "bottom-right"
+          ],
+          "offset": [
+            3,
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "place_labels",
+      "from": {
+        "data": "place_labels_halo"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "update": {
+          "x": {
+            "field": "x"
+          },
+          "y": {
+            "field": "y"
+          },
+          "text": {
+            "field": "text"
+          },
+          "align": {
+            "field": "align"
+          },
+          "baseline": {
+            "field": "baseline"
+          },
+          "opacity": {
+            "field": "opacity"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "fill": {
+            "value": "#3b3226"
+          }
+        }
+      }
+    }
+  ],
   "config": {
     "background": "transparent",
-    "view": {
-      "stroke": null
-    },
-    "font": "Source Serif 4",
-    "axis": {
-      "labelColor": "#3b3226",
-      "titleColor": "#3b3226",
-      "domainColor": "#b9ad97",
-      "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
-      "labelFontSize": 12,
-      "titleFontSize": 12,
-      "titleFontWeight": 600,
-      "labelLimit": 280
-    },
-    "legend": {
-      "labelColor": "#3b3226",
-      "titleColor": "#3b3226",
-      "labelFontSize": 12,
-      "titleFontSize": 12,
-      "labelLimit": 240
-    },
     "text": {
       "font": "Source Serif 4",
-      "color": "#3b3226"
+      "fill": "#3b3226"
+    },
+    "legend": {
+      "labelFont": "Source Serif 4",
+      "titleFont": "Source Serif 4",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "fillColor": "#f4ecdbe6",
+      "padding": 8,
+      "cornerRadius": 4,
+      "labelLimit": 220
     }
   }
 }

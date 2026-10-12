@@ -1,179 +1,463 @@
 {
-  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Choropleth map: number of Victorians born in each overseas country at the 1911 census (log scale).",
-  "autosize": {
-    "type": "fit",
-    "contains": "padding",
-    "resize": true
-  },
-  "padding": {
-    "left": 40,
-    "right": 10,
-    "top": 10,
-    "bottom": 5
-  },
-  "width": "container",
-  "height": 420,
-  "projection": {
-    "type": "equalEarth",
-    "rotate": [
-      -60,
-      0,
-      0
-    ]
-  },
-  "layer": [
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Zoomable choropleth map: Victorians born in each overseas country at the 1911 census (log colour scale).",
+  "autosize": "none",
+  "padding": 0,
+  "signals": [
     {
-      "data": {
-        "url": "data/ne_110m_admin_0_countries.topojson",
-        "format": {
-          "type": "topojson",
-          "feature": "ne_110m_admin_0_countries"
+      "name": "width",
+      "init": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760",
+      "on": [
+        {
+          "events": "window:resize",
+          "update": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760"
         }
+      ]
+    },
+    {
+      "name": "height",
+      "update": "max(300, min(470, round(width * 0.603)))"
+    },
+    {
+      "name": "zoom",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 1,
+        "max": 10,
+        "step": 0.1,
+        "name": "Zoom "
       },
-      "mark": {
-        "type": "geoshape",
-        "fill": "#efe9dc",
-        "stroke": "#fbf7ef",
-        "strokeWidth": 0.6
+      "on": [
+        {
+          "events": {
+            "type": "wheel",
+            "consume": true,
+            "filter": "event.ctrlKey"
+          },
+          "update": "clamp(zoom * pow(1.003, -event.deltaY), 1, 10)"
+        },
+        {
+          "events": "dblclick",
+          "update": "1"
+        }
+      ]
+    },
+    {
+      "name": "angles",
+      "value": [
+        0,
+        0
+      ],
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "[rotateX, centerY]"
+        }
+      ]
+    },
+    {
+      "name": "cloned",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "copy('projection')"
+        }
+      ]
+    },
+    {
+      "name": "start",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown",
+          "update": "invert(cloned, xy())"
+        }
+      ]
+    },
+    {
+      "name": "drag",
+      "value": null,
+      "on": [
+        {
+          "events": "[pointerdown, window:pointerup] > window:pointermove",
+          "update": "invert(cloned, xy())"
+        }
+      ]
+    },
+    {
+      "name": "delta",
+      "value": null,
+      "on": [
+        {
+          "events": {
+            "signal": "drag"
+          },
+          "update": "[drag[0] - start[0], start[1] - drag[1]]"
+        }
+      ]
+    },
+    {
+      "name": "rotateX",
+      "value": -60,
+      "on": [
+        {
+          "events": {
+            "signal": "delta"
+          },
+          "update": "angles[0] + delta[0]"
+        },
+        {
+          "events": "dblclick",
+          "update": "-60"
+        }
+      ]
+    },
+    {
+      "name": "centerY",
+      "value": 10,
+      "on": [
+        {
+          "events": {
+            "signal": "delta"
+          },
+          "update": "clamp(angles[1] + delta[1], -70, 70)"
+        },
+        {
+          "events": "dblclick",
+          "update": "10"
+        }
+      ]
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "type": "equalEarth",
+      "scale": {
+        "signal": "width / 5.4 * zoom"
+      },
+      "rotate": [
+        {
+          "signal": "rotateX"
+        },
+        0,
+        0
+      ],
+      "center": [
+        0,
+        {
+          "signal": "centerY"
+        }
+      ],
+      "translate": [
+        {
+          "signal": "width / 2"
+        },
+        {
+          "signal": "height / 2"
+        }
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "birth",
+      "url": "data/vic_birthplace_1911.csv",
+      "format": {
+        "type": "csv",
+        "parse": "auto"
       }
     },
     {
-      "data": {
-        "url": "data/ne_110m_admin_0_countries.topojson",
-        "format": {
-          "type": "topojson",
-          "feature": "ne_110m_admin_0_countries"
+      "name": "world",
+      "url": "data/ne_110m_admin_0_countries.topojson",
+      "format": {
+        "type": "topojson",
+        "feature": "ne_110m_admin_0_countries"
+      },
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "birth",
+          "key": "country",
+          "fields": [
+            "properties.NAME"
+          ],
+          "values": [
+            "persons"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "notes",
+      "values": [
+        {
+          "lon": -3,
+          "lat": 54,
+          "dx": -30,
+          "dy": -48,
+          "label": "Britain 116,900 · Ireland 41,500"
+        },
+        {
+          "lon": 104,
+          "lat": 35,
+          "dx": 25,
+          "dy": 70,
+          "label": "China 4,300: gold-rush miners"
+        }
+      ],
+      "transform": [
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": [
+            "lon",
+            "lat"
+          ],
+          "as": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "type": "formula",
+          "as": "lx",
+          "expr": "datum.x + datum.dx"
+        },
+        {
+          "type": "formula",
+          "as": "ly",
+          "expr": "datum.y + datum.dy"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "colour",
+      "type": "log",
+      "domain": [
+        1,
+        120000
+      ],
+      "range": [
+        "#d9e6f2",
+        "#0d3a66"
+      ],
+      "interpolate": "lab"
+    }
+  ],
+  "legends": [
+    {
+      "fill": "colour",
+      "type": "gradient",
+      "title": "Victorians born there, 1911",
+      "orient": "bottom-left",
+      "values": [
+        1,
+        10,
+        100,
+        1000,
+        10000,
+        100000
+      ],
+      "format": "~s",
+      "gradientLength": 220,
+      "titleLimit": 260,
+      "direction": "horizontal"
+    }
+  ],
+  "marks": [
+    {
+      "type": "shape",
+      "from": {
+        "data": "world"
+      },
+      "clip": true,
+      "encode": {
+        "enter": {
+          "stroke": {
+            "value": "#fbf7ef"
+          },
+          "strokeWidth": {
+            "value": 0.6
+          },
+          "tooltip": {
+            "signal": "{'Country': datum.properties.NAME, 'Victorians born there (1911)': datum.persons ? format(datum.persons, ',') : 'none recorded'}"
+          }
+        },
+        "update": {
+          "fill": [
+            {
+              "test": "datum.persons > 0",
+              "scale": "colour",
+              "field": "persons"
+            },
+            {
+              "value": "#efe9dc"
+            }
+          ],
+          "stroke": {
+            "value": "#fbf7ef"
+          },
+          "strokeWidth": {
+            "value": 0.6
+          }
+        },
+        "hover": {
+          "stroke": {
+            "value": "#3b3226"
+          },
+          "strokeWidth": {
+            "value": 1.5
+          }
         }
       },
       "transform": [
         {
-          "lookup": "properties.NAME",
-          "from": {
-            "data": {
-              "url": "data/vic_birthplace_1911.csv"
-            },
-            "key": "country",
-            "fields": [
-              "persons"
-            ]
-          }
-        },
-        {
-          "filter": "isValid(datum.persons) && datum.persons > 0"
+          "type": "geoshape",
+          "projection": "projection"
         }
-      ],
-      "mark": {
-        "type": "geoshape",
-        "stroke": "#fbf7ef",
-        "strokeWidth": 0.6
+      ]
+    },
+    {
+      "type": "rule",
+      "from": {
+        "data": "notes"
       },
-      "encoding": {
-        "color": {
-          "field": "persons",
-          "type": "quantitative",
-          "title": "Victorians born there, 1911",
-          "scale": {
-            "type": "log",
-            "domain": [
-              1,
-              120000
-            ],
-            "range": [
-              "#d9e6f2",
-              "#0d3a66"
-            ]
+      "clip": true,
+      "encode": {
+        "enter": {
+          "stroke": {
+            "value": "#3b3226"
           },
-          "legend": {
-            "orient": "bottom-left",
-            "format": "~s",
-            "titleLimit": 260,
-            "values": [
-              1,
-              10,
-              100,
-              1000,
-              10000,
-              100000
-            ],
-            "gradientLength": 200
+          "strokeWidth": {
+            "value": 1
           }
         },
-        "tooltip": [
-          {
-            "field": "properties.NAME",
-            "title": "Country"
+        "update": {
+          "x": {
+            "field": "x"
           },
-          {
-            "field": "persons",
-            "type": "quantitative",
-            "format": ",",
-            "title": "Victorians born there (1911)"
+          "y": {
+            "field": "y"
+          },
+          "x2": {
+            "field": "lx"
+          },
+          "y2": {
+            "field": "ly"
           }
-        ]
+        }
       }
     },
     {
-      "data": {
-        "values": [
-          {
-            "lon": -18,
-            "lat": -30,
-            "label": "Darkest: Britain (117,000)\\nand Ireland (41,000)"
+      "type": "text",
+      "from": {
+        "data": "notes"
+      },
+      "clip": true,
+      "encode": {
+        "enter": {
+          "text": {
+            "field": "label"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "fontStyle": {
+            "value": "italic"
+          },
+          "fill": {
+            "value": "#f4ecdb"
+          },
+          "stroke": {
+            "value": "#f4ecdb"
+          },
+          "strokeWidth": {
+            "value": 4
+          },
+          "align": {
+            "signal": "datum.dx < 0 ? 'right' : 'left'"
+          },
+          "baseline": {
+            "value": "middle"
           }
-        ]
-      },
-      "mark": {
-        "type": "text",
-        "font": "Source Serif 4",
-        "fontSize": 12,
-        "fontStyle": "italic",
-        "fill": "#3b3226",
-        "lineBreak": "\\n",
-        "align": "center"
-      },
-      "encoding": {
-        "longitude": {
-          "field": "lon",
-          "type": "quantitative"
         },
-        "latitude": {
-          "field": "lat",
-          "type": "quantitative"
+        "update": {
+          "x": {
+            "signal": "datum.lx + (datum.dx < 0 ? -4 : 4)"
+          },
+          "y": {
+            "field": "ly"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "notes"
+      },
+      "clip": true,
+      "encode": {
+        "enter": {
+          "text": {
+            "field": "label"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "fontStyle": {
+            "value": "italic"
+          },
+          "fill": {
+            "value": "#3b3226"
+          },
+          "stroke": {
+            "value": null
+          },
+          "strokeWidth": {
+            "value": 0
+          },
+          "align": {
+            "signal": "datum.dx < 0 ? 'right' : 'left'"
+          },
+          "baseline": {
+            "value": "middle"
+          }
         },
-        "text": {
-          "field": "label"
+        "update": {
+          "x": {
+            "signal": "datum.lx + (datum.dx < 0 ? -4 : 4)"
+          },
+          "y": {
+            "field": "ly"
+          }
         }
       }
     }
   ],
   "config": {
     "background": "transparent",
-    "view": {
-      "stroke": null
-    },
-    "font": "Source Serif 4",
-    "axis": {
-      "labelColor": "#3b3226",
-      "titleColor": "#3b3226",
-      "domainColor": "#b9ad97",
-      "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
-      "labelFontSize": 12,
-      "titleFontSize": 12,
-      "titleFontWeight": 600,
-      "labelLimit": 280
-    },
-    "legend": {
-      "labelColor": "#3b3226",
-      "titleColor": "#3b3226",
-      "labelFontSize": 12,
-      "titleFontSize": 12,
-      "labelLimit": 240
-    },
     "text": {
       "font": "Source Serif 4",
-      "color": "#3b3226"
+      "fill": "#3b3226"
+    },
+    "legend": {
+      "labelFont": "Source Serif 4",
+      "titleFont": "Source Serif 4",
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelColor": "#3b3226",
+      "titleColor": "#3b3226",
+      "fillColor": "#f4ecdbe6",
+      "padding": 8,
+      "cornerRadius": 4,
+      "labelLimit": 220
     }
   }
 }
