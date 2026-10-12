@@ -1,116 +1,216 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Stacked bar chart: overseas countries most often depicted, split by theme.",
+  "description": "Stacked bar chart: overseas countries most often pictured, split by theme, with notes on the largest sets.",
   "autosize": {
     "type": "fit",
     "contains": "padding",
     "resize": true
   },
   "padding": {
-    "left": 40,
-    "right": 10,
+    "left": 16,
+    "right": 12,
     "top": 10,
-    "bottom": 5
+    "bottom": 6
   },
   "width": "container",
-  "height": 260,
-  "data": {
-    "url": "data/depicted_by_theme.csv"
-  },
-  "transform": [
+  "height": 270,
+  "layer": [
     {
-      "filter": "datum.depicted_country !== 'Australia'"
-    },
-    {
-      "joinaggregate": [
+      "data": {
+        "url": "data/depicted_by_theme.csv"
+      },
+      "params": [
         {
-          "op": "sum",
-          "field": "postcards",
-          "as": "total"
+          "name": "pick",
+          "select": {
+            "type": "point",
+            "fields": [
+              "theme"
+            ]
+          },
+          "bind": "legend"
         }
       ],
-      "groupby": [
-        "depicted_country"
-      ]
+      "transform": [
+        {
+          "filter": "datum.depicted_country !== 'Australia'"
+        },
+        {
+          "calculate": "indexof([\"Exhibition Building\", \"War & service\", \"Migration\", \"Everyday correspondence\", \"Other\"], datum.theme)",
+          "as": "order"
+        }
+      ],
+      "mark": {
+        "type": "bar",
+        "height": {
+          "band": 0.7
+        },
+        "stroke": "#fbf7ef",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "y": {
+          "field": "depicted_country",
+          "type": "nominal",
+          "title": null,
+          "sort": [
+            "Egypt",
+            "Iraq",
+            "United Kingdom",
+            "India",
+            "France",
+            "Greece",
+            "Yemen",
+            "Algeria"
+          ],
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "minExtent": 120
+          }
+        },
+        "x": {
+          "field": "postcards",
+          "type": "quantitative",
+          "aggregate": "sum",
+          "title": "Postcards picturing the country",
+          "scale": {
+            "domain": [
+              0,
+              80
+            ]
+          },
+          "axis": {
+            "values": [
+              0,
+              10,
+              20,
+              30,
+              40
+            ]
+          }
+        },
+        "color": {
+          "field": "theme",
+          "type": "nominal",
+          "title": "Theme (click to highlight)",
+          "scale": {
+            "domain": [
+              "Exhibition Building",
+              "War & service",
+              "Migration",
+              "Everyday correspondence",
+              "Other"
+            ],
+            "range": [
+              "#b07d10",
+              "#9b2c2c",
+              "#1a66a8",
+              "#4a8a32",
+              "#a39a8a"
+            ]
+          },
+          "sort": [
+            "Exhibition Building",
+            "War & service",
+            "Migration",
+            "Everyday correspondence",
+            "Other"
+          ],
+          "legend": {
+            "orient": "bottom",
+            "columns": 3,
+            "symbolType": "square"
+          }
+        },
+        "order": {
+          "field": "order"
+        },
+        "opacity": {
+          "condition": {
+            "param": "pick",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.15
+        },
+        "tooltip": [
+          {
+            "field": "depicted_country",
+            "title": "Country"
+          },
+          {
+            "field": "theme",
+            "title": "Theme"
+          },
+          {
+            "field": "postcards",
+            "type": "quantitative",
+            "aggregate": "sum",
+            "title": "Postcards"
+          }
+        ]
+      }
     },
     {
-      "calculate": "indexof([\"Exhibition Building\", \"War & service\", \"Migration\", \"Everyday correspondence\", \"Other\"], datum.theme)",
-      "as": "order"
-    }
-  ],
-  "mark": {
-    "type": "bar",
-    "height": {
-      "band": 0.7
-    },
-    "stroke": "#fbf7ef",
-    "strokeWidth": 1
-  },
-  "encoding": {
-    "y": {
-      "field": "depicted_country",
-      "type": "nominal",
-      "title": null,
-      "sort": "-x",
-      "axis": {
-        "domain": false,
-        "ticks": false
-      }
-    },
-    "x": {
-      "field": "postcards",
-      "type": "quantitative",
-      "aggregate": "sum",
-      "title": "Postcards depicting the country",
-      "axis": {
-        "tickCount": 5
-      }
-    },
-    "color": {
-      "field": "theme",
-      "type": "nominal",
-      "title": "Theme",
-      "scale": {
-        "domain": [
-          "Exhibition Building",
-          "War & service",
-          "Migration",
-          "Everyday correspondence",
-          "Other"
-        ],
-        "range": [
-          "#b07d10",
-          "#9b2c2c",
-          "#1a66a8",
-          "#4a8a32",
-          "#a39a8a"
+      "data": {
+        "values": [
+          {
+            "depicted_country": "Egypt",
+            "x": 43,
+            "label": "the Peile brothers' album, Heliopolis 1914–16"
+          },
+          {
+            "depicted_country": "Iraq",
+            "x": 42,
+            "label": "one set: monitor ships on the Tigris, 1916–19"
+          },
+          {
+            "depicted_country": "United Kingdom",
+            "x": 24,
+            "label": "home to most migrants' families"
+          },
+          {
+            "depicted_country": "Algeria",
+            "x": 4,
+            "label": "a 1951 voyage via Algiers"
+          }
         ]
       },
-      "legend": {
-        "orient": "bottom",
-        "columns": 3
-      }
-    },
-    "order": {
-      "field": "order"
-    },
-    "tooltip": [
-      {
-        "field": "depicted_country",
-        "title": "Country"
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "left",
+        "dx": 6
       },
-      {
-        "field": "theme",
-        "title": "Theme"
-      },
-      {
-        "field": "postcards",
-        "type": "quantitative",
-        "aggregate": "sum",
-        "title": "Postcards"
+      "encoding": {
+        "y": {
+          "field": "depicted_country",
+          "type": "nominal",
+          "sort": [
+            "Egypt",
+            "Iraq",
+            "United Kingdom",
+            "India",
+            "France",
+            "Greece",
+            "Yemen",
+            "Algeria"
+          ]
+        },
+        "x": {
+          "field": "x",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
       }
-    ]
-  },
+    }
+  ],
   "config": {
     "background": "transparent",
     "view": {
@@ -122,7 +222,7 @@
       "titleColor": "#3b3226",
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
+      "gridColor": "#e8decb",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "titleFontWeight": 600,
@@ -133,7 +233,8 @@
       "titleColor": "#3b3226",
       "labelFontSize": 12,
       "titleFontSize": 12,
-      "labelLimit": 240
+      "labelLimit": 260,
+      "symbolType": "circle"
     },
     "text": {
       "font": "Source Serif 4",

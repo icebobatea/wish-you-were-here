@@ -1,19 +1,19 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Bar chart: number of postcards in each museum collection (top 8).",
+  "description": "Bar chart: postcards in each museum collection (top 8), with the uncatalogued share highlighted.",
   "autosize": {
     "type": "fit",
     "contains": "padding",
     "resize": true
   },
   "padding": {
-    "left": 40,
-    "right": 10,
+    "left": 16,
+    "right": 12,
     "top": 10,
-    "bottom": 5
+    "bottom": 6
   },
   "width": "container",
-  "height": 250,
+  "height": 260,
   "data": {
     "url": "data/collections.csv"
   },
@@ -22,16 +22,32 @@
       "field": "collection",
       "type": "nominal",
       "title": null,
-      "sort": "-x",
+      "sort": [
+        "No named collection",
+        "Royal Exhibition Building Collection",
+        "RSL Collection",
+        "Military Memorabilia Collection",
+        "Rodda Collection",
+        "Museum History Collection",
+        "Kodak Heritage Collection",
+        "Olive Oliver Collection"
+      ],
       "axis": {
         "domain": false,
-        "ticks": false
+        "ticks": false,
+        "minExtent": 250
       }
     },
     "x": {
       "field": "postcards",
       "type": "quantitative",
       "title": "Postcards",
+      "scale": {
+        "domain": [
+          0,
+          400
+        ]
+      },
       "axis": {
         "grid": true,
         "tickCount": 5
@@ -40,6 +56,16 @@
   },
   "layer": [
     {
+      "params": [
+        {
+          "name": "hover",
+          "select": {
+            "type": "point",
+            "on": "pointerover",
+            "clear": "pointerout"
+          }
+        }
+      ],
       "mark": {
         "type": "bar",
         "cornerRadiusEnd": 4,
@@ -54,6 +80,14 @@
             "value": "#cfc5b2"
           },
           "value": "#9b2c2c"
+        },
+        "opacity": {
+          "condition": {
+            "param": "hover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.55
         },
         "tooltip": [
           {
@@ -81,6 +115,56 @@
           "type": "quantitative"
         }
       }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "collection": "No named collection",
+            "postcards": 380,
+            "label": "40% of cards: who owned them is unknown"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "right",
+        "dx": -8
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "collection": "RSL Collection",
+            "postcards": 184,
+            "label": "the RSL gave 184 of the 306 WWI-era cards"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "left",
+        "dx": 36
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        }
+      }
     }
   ],
   "config": {
@@ -94,7 +178,7 @@
       "titleColor": "#3b3226",
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
+      "gridColor": "#e8decb",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "titleFontWeight": 600,
@@ -105,7 +189,8 @@
       "titleColor": "#3b3226",
       "labelFontSize": 12,
       "titleFontSize": 12,
-      "labelLimit": 240
+      "labelLimit": 260,
+      "symbolType": "circle"
     },
     "text": {
       "font": "Source Serif 4",

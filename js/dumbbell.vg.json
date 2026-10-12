@@ -1,19 +1,19 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Dumbbell chart: share of each theme among cards from before 1920 versus 1920 onwards.",
+  "description": "Dumbbell chart: share of each theme among cards from before 1920 versus 1920 onwards, with the change in points.",
   "autosize": {
     "type": "fit",
     "contains": "padding",
     "resize": true
   },
   "padding": {
-    "left": 40,
-    "right": 10,
+    "left": 16,
+    "right": 12,
     "top": 10,
-    "bottom": 5
+    "bottom": 6
   },
   "width": "container",
-  "height": 230,
+  "height": 240,
   "data": {
     "url": "data/theme_shift.csv"
   },
@@ -32,7 +32,8 @@
       "axis": {
         "domain": false,
         "ticks": false,
-        "labelPadding": 8
+        "labelPadding": 8,
+        "minExtent": 175
       }
     }
   },
@@ -56,9 +57,21 @@
       }
     },
     {
+      "params": [
+        {
+          "name": "era_pick",
+          "select": {
+            "type": "point",
+            "fields": [
+              "era"
+            ]
+          },
+          "bind": "legend"
+        }
+      ],
       "mark": {
         "type": "circle",
-        "size": 160,
+        "size": 170,
         "opacity": 1,
         "stroke": "#fbf7ef",
         "strokeWidth": 2
@@ -71,11 +84,18 @@
           "scale": {
             "domain": [
               0,
-              50
+              62
             ]
           },
           "axis": {
-            "tickCount": 5
+            "values": [
+              0,
+              10,
+              20,
+              30,
+              40,
+              50
+            ]
           }
         },
         "color": {
@@ -96,6 +116,14 @@
             "orient": "top",
             "direction": "horizontal"
           }
+        },
+        "opacity": {
+          "condition": {
+            "param": "era_pick",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.2
         },
         "tooltip": [
           {
@@ -132,6 +160,46 @@
           "format": ".0f"
         }
       }
+    },
+    {
+      "transform": [
+        {
+          "pivot": "era",
+          "value": "share",
+          "groupby": [
+            "theme"
+          ]
+        },
+        {
+          "calculate": "datum['1920 onwards'] - datum['Before 1920']",
+          "as": "change"
+        },
+        {
+          "calculate": "(datum.change > 0 ? '▲ +' : '▼ ') + format(datum.change, '.0f') + ' pts'",
+          "as": "change_label"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "fontSize": 12,
+        "fontWeight": 700,
+        "x": {
+          "expr": "width - 62"
+        }
+      },
+      "encoding": {
+        "text": {
+          "field": "change_label"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.change > 0",
+            "value": "#1a66a8"
+          },
+          "value": "#9b2c2c"
+        }
+      }
     }
   ],
   "config": {
@@ -145,7 +213,7 @@
       "titleColor": "#3b3226",
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
+      "gridColor": "#e8decb",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "titleFontWeight": 600,
@@ -156,7 +224,8 @@
       "titleColor": "#3b3226",
       "labelFontSize": 12,
       "titleFontSize": 12,
-      "labelLimit": 240
+      "labelLimit": 260,
+      "symbolType": "circle"
     },
     "text": {
       "font": "Source Serif 4",
