@@ -68,7 +68,7 @@ FLOW_POINTS = {
 FLOW_FIX = {"Scotland, Great Britain": "Scotland", "England, Great Britain": "England"}
 
 THEMES = ["Exhibition Building", "War & service", "Migration",
-          "Everyday correspondence", "Other"]
+          "Correspondence", "Other"]
 
 
 def year_of(s):
@@ -82,7 +82,7 @@ def theme_of(classifications):
         ("Royal exhibition", "Exhibition Building"),
         ("Military", "War & service"),
         ("Migration", "Migration"),
-        ("Postal", "Everyday correspondence"),
+        ("Postal", "Correspondence"),
     ]:
         if key in c:
             return label
