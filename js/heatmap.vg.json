@@ -1,54 +1,46 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Heatmap: number of postcards by decade and theme.",
+  "description": "Heatmap: postcards by decade and theme, with four lettered cells explained in the text.",
   "autosize": {
     "type": "fit",
     "contains": "padding",
     "resize": true
   },
   "padding": {
-    "left": 40,
-    "right": 10,
+    "left": 16,
+    "right": 12,
     "top": 10,
-    "bottom": 5
+    "bottom": 6
   },
   "width": "container",
-  "height": 210,
-  "data": {
-    "url": "data/postcards.csv"
-  },
-  "transform": [
-    {
-      "filter": "isValid(datum.year) && datum.year >= 1870"
-    },
-    {
-      "aggregate": [
-        {
-          "op": "count",
-          "as": "postcards"
-        }
-      ],
-      "groupby": [
-        "decade",
-        "theme"
-      ]
-    },
-    {
-      "calculate": "datum.decade + 's'",
-      "as": "decade_label"
-    }
-  ],
+  "height": 230,
   "encoding": {
     "x": {
       "field": "decade_label",
       "type": "ordinal",
       "title": null,
-      "sort": {
-        "field": "decade"
-      },
+      "sort": [
+        "1870s",
+        "1880s",
+        "1890s",
+        "1900s",
+        "1910s",
+        "1920s",
+        "1930s",
+        "1940s",
+        "1950s",
+        "1960s",
+        "1970s",
+        "1980s",
+        "1990s",
+        "2000s",
+        "2010s"
+      ],
       "axis": {
         "labelAngle": 0,
-        "labelFontSize": 11
+        "labelFontSize": 11,
+        "domain": false,
+        "ticks": false
       }
     },
     "y": {
@@ -61,67 +53,204 @@
         "Migration",
         "Everyday correspondence",
         "Other"
-      ]
+      ],
+      "axis": {
+        "domain": false,
+        "ticks": false,
+        "minExtent": 175
+      }
     }
   },
   "layer": [
     {
-      "mark": {
-        "type": "rect",
-        "stroke": "#fbf7ef",
-        "strokeWidth": 2,
-        "cornerRadius": 2
+      "data": {
+        "url": "data/postcards.csv",
+        "format": {
+          "parse": {
+            "year": "number"
+          }
+        }
       },
-      "encoding": {
-        "color": {
-          "field": "postcards",
-          "type": "quantitative",
-          "title": "Postcards",
-          "scale": {
-            "type": "sqrt",
-            "range": [
-              "#f1e3c4",
-              "#6b2a12"
-            ]
+      "transform": [
+        {
+          "filter": "isValid(datum.year) && datum.year >= 1870"
+        },
+        {
+          "aggregate": [
+            {
+              "op": "count",
+              "as": "postcards"
+            }
+          ],
+          "groupby": [
+            "decade",
+            "theme"
+          ]
+        },
+        {
+          "calculate": "datum.decade + 's'",
+          "as": "decade_label"
+        }
+      ],
+      "layer": [
+        {
+          "params": [
+            {
+              "name": "cell",
+              "select": {
+                "type": "point",
+                "on": "pointerover",
+                "clear": "pointerout"
+              }
+            }
+          ],
+          "mark": {
+            "type": "rect",
+            "cornerRadius": 3,
+            "strokeWidth": 2
           },
-          "legend": {
-            "orient": "right",
-            "gradientLength": 160
+          "encoding": {
+            "color": {
+              "field": "postcards",
+              "type": "quantitative",
+              "title": "Postcards",
+              "scale": {
+                "type": "sqrt",
+                "range": [
+                  "#f1e3c4",
+                  "#6b2a12"
+                ]
+              },
+              "legend": {
+                "orient": "right",
+                "gradientLength": 150
+              }
+            },
+            "stroke": {
+              "condition": {
+                "param": "cell",
+                "empty": false,
+                "value": "#3b3226"
+              },
+              "value": "#fbf7ef"
+            },
+            "tooltip": [
+              {
+                "field": "decade_label",
+                "title": "Decade"
+              },
+              {
+                "field": "theme",
+                "title": "Theme"
+              },
+              {
+                "field": "postcards",
+                "type": "quantitative",
+                "title": "Postcards"
+              }
+            ]
           }
         },
-        "tooltip": [
-          {
-            "field": "decade_label",
-            "title": "Decade"
+        {
+          "mark": {
+            "type": "text",
+            "fontSize": 11
           },
-          {
-            "field": "theme",
-            "title": "Theme"
-          },
-          {
-            "field": "postcards",
-            "type": "quantitative",
-            "title": "Postcards"
+          "encoding": {
+            "text": {
+              "field": "postcards",
+              "type": "quantitative"
+            },
+            "color": {
+              "condition": {
+                "test": "datum.postcards > 60",
+                "value": "#fbf7ef"
+              },
+              "value": "#3b3226"
+            }
           }
+        }
+      ]
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "decade_label": "1900s",
+            "theme": "Everyday correspondence",
+            "tag": "A"
+          },
+          {
+            "decade_label": "1910s",
+            "theme": "War & service",
+            "tag": "B"
+          },
+          {
+            "decade_label": "1950s",
+            "theme": "Migration",
+            "tag": "C"
+          },
+          {
+            "decade_label": "2000s",
+            "theme": "Migration",
+            "tag": "D"
+          }
+        ]
+      },
+      "mark": {
+        "type": "rect",
+        "fill": null,
+        "stroke": "#3b3226",
+        "strokeWidth": 2,
+        "cornerRadius": 3,
+        "strokeDash": [
+          4,
+          2
         ]
       }
     },
     {
+      "data": {
+        "values": [
+          {
+            "decade_label": "1900s",
+            "theme": "Everyday correspondence",
+            "tag": "A"
+          },
+          {
+            "decade_label": "1910s",
+            "theme": "War & service",
+            "tag": "B"
+          },
+          {
+            "decade_label": "1950s",
+            "theme": "Migration",
+            "tag": "C"
+          },
+          {
+            "decade_label": "2000s",
+            "theme": "Migration",
+            "tag": "D"
+          }
+        ]
+      },
       "mark": {
         "type": "text",
-        "fontSize": 11
+        "fontSize": 11,
+        "fontWeight": 700,
+        "align": "left",
+        "baseline": "top",
+        "xOffset": {
+          "expr": "-bandwidth('x') / 2 + 3"
+        },
+        "yOffset": {
+          "expr": "-bandwidth('y') / 2 + 2"
+        },
+        "color": "#3b3226"
       },
       "encoding": {
         "text": {
-          "field": "postcards",
-          "type": "quantitative"
-        },
-        "color": {
-          "condition": {
-            "test": "datum.postcards > 60",
-            "value": "#fbf7ef"
-          },
-          "value": "#3b3226"
+          "field": "tag"
         }
       }
     }
@@ -137,7 +266,7 @@
       "titleColor": "#3b3226",
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
+      "gridColor": "#e8decb",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "titleFontWeight": 600,
@@ -148,7 +277,8 @@
       "titleColor": "#3b3226",
       "labelFontSize": 12,
       "titleFontSize": 12,
-      "labelLimit": 240
+      "labelLimit": 260,
+      "symbolType": "circle"
     },
     "text": {
       "font": "Source Serif 4",

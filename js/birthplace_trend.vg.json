@@ -1,234 +1,480 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Line chart: Victorians born in Britain, Ireland, Italy, Greece, India and China at each census, 1901-2011.",
+  "description": "Line chart: Victorians born in six countries at each census, 1901-2011, with policy events marked.",
   "autosize": {
     "type": "fit",
     "contains": "padding",
     "resize": true
   },
   "padding": {
-    "left": 40,
-    "right": 10,
+    "left": 8,
+    "right": 60,
     "top": 10,
-    "bottom": 5
+    "bottom": 6
   },
   "width": "container",
-  "height": 320,
-  "data": {
-    "url": "data/vic_birthplace_trend.csv"
-  },
-  "encoding": {
-    "x": {
-      "field": "year",
-      "type": "quantitative",
-      "title": "Census year",
-      "scale": {
-        "domain": [
-          1901,
-          2011
-        ],
-        "nice": false
-      },
-      "axis": {
-        "format": "d",
-        "values": [
-          1901,
-          1921,
-          1947,
-          1961,
-          1981,
-          2001,
-          2011
-        ],
-        "grid": false
-      }
-    },
-    "y": {
-      "field": "persons",
-      "type": "quantitative",
-      "title": "Victorians born there",
-      "axis": {
-        "format": "~s",
-        "tickCount": 5
-      }
-    },
-    "color": {
-      "field": "group",
-      "type": "nominal",
-      "title": "Born in",
-      "scale": {
-        "domain": [
-          "Britain",
-          "Ireland",
-          "Italy",
-          "Greece",
-          "India",
-          "China"
-        ],
-        "range": [
-          "#1a66a8",
-          "#1a66a8",
-          "#b07d10",
-          "#b07d10",
-          "#a23b72",
-          "#a23b72"
-        ]
-      },
-      "sort": [
-        "Britain",
-        "Ireland",
-        "Italy",
-        "Greece",
-        "India",
-        "China"
-      ],
-      "legend": {
-        "orient": "top",
-        "direction": "horizontal",
-        "symbolType": "stroke",
-        "symbolStrokeWidth": 2.5,
-        "symbolSize": 300
-      }
-    },
-    "strokeDash": {
-      "field": "group",
-      "type": "nominal",
-      "scale": {
-        "domain": [
-          "Britain",
-          "Ireland",
-          "Italy",
-          "Greece",
-          "India",
-          "China"
-        ],
-        "range": [
-          [
-            1,
-            0
-          ],
-          [
-            6,
-            4
-          ],
-          [
-            1,
-            0
-          ],
-          [
-            6,
-            4
-          ],
-          [
-            1,
-            0
-          ],
-          [
-            6,
-            4
-          ]
-        ]
-      },
-      "sort": [
-        "Britain",
-        "Ireland",
-        "Italy",
-        "Greece",
-        "India",
-        "China"
-      ],
-      "title": "Born in",
-      "legend": {
-        "orient": "top",
-        "direction": "horizontal",
-        "symbolType": "stroke",
-        "symbolStrokeWidth": 2.5,
-        "symbolSize": 300
-      }
-    }
-  },
+  "height": 340,
   "layer": [
     {
-      "mark": {
-        "type": "line",
-        "strokeWidth": 2.5
-      }
-    },
-    {
-      "params": [
-        {
-          "name": "hover",
-          "select": {
-            "type": "point",
-            "fields": [
-              "year"
-            ],
-            "on": "pointerover",
-            "nearest": true,
-            "clear": "pointerout"
-          }
-        }
-      ],
-      "mark": {
-        "type": "point",
-        "filled": true,
-        "size": 60
-      },
-      "encoding": {
-        "opacity": {
-          "condition": {
-            "param": "hover",
-            "empty": false,
-            "value": 1
-          },
-          "value": 0
-        },
-        "strokeDash": null,
-        "tooltip": [
+      "data": {
+        "values": [
           {
-            "field": "group",
-            "title": "Born in"
+            "year": 1947,
+            "label": "1947: post-war|migration scheme begins",
+            "y": 6,
+            "align": "right",
+            "dx": -4
           },
           {
-            "field": "year",
-            "title": "Census"
-          },
-          {
-            "field": "persons",
-            "type": "quantitative",
-            "format": ",",
-            "title": "Victorians"
+            "year": 1973,
+            "label": "1973: White Australia|policy ends",
+            "y": 95,
+            "align": "right",
+            "dx": -4
           }
         ]
-      }
-    },
-    {
-      "transform": [
-        {
-          "filter": "datum.year === 2011"
-        }
-      ],
+      },
       "mark": {
-        "type": "text",
-        "align": "left",
-        "dx": 6,
-        "fontSize": 12,
-        "fontWeight": 600
+        "type": "rule",
+        "strokeDash": [
+          3,
+          3
+        ],
+        "color": "#6e6253"
       },
       "encoding": {
-        "text": {
-          "field": "group"
-        },
-        "strokeDash": null
+        "x": {
+          "field": "year",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1901,
+              2011
+            ],
+            "nice": false,
+            "zero": false
+          }
+        }
       }
     },
     {
       "data": {
         "values": [
           {
-            "year": 1958,
-            "persons": 150000,
-            "label": "Post-war migration\\nfrom southern Europe"
+            "year": 1947,
+            "label": "1947: post-war|migration scheme begins",
+            "y": 6,
+            "align": "right",
+            "dx": -4
+          },
+          {
+            "year": 1973,
+            "label": "1973: White Australia|policy ends",
+            "y": 95,
+            "align": "right",
+            "dx": -4
+          }
+        ]
+      },
+      "transform": [
+        {
+          "filter": "datum.year === 1947"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 11,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "right",
+        "dx": -4,
+        "y": 6,
+        "lineBreak": "|",
+        "baseline": "top"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1901,
+              2011
+            ],
+            "nice": false,
+            "zero": false
+          }
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "year": 1947,
+            "label": "1947: post-war|migration scheme begins",
+            "y": 6,
+            "align": "right",
+            "dx": -4
+          },
+          {
+            "year": 1973,
+            "label": "1973: White Australia|policy ends",
+            "y": 95,
+            "align": "right",
+            "dx": -4
+          }
+        ]
+      },
+      "transform": [
+        {
+          "filter": "datum.year === 1973"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 11,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "right",
+        "dx": -4,
+        "y": 95,
+        "lineBreak": "|",
+        "baseline": "top"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1901,
+              2011
+            ],
+            "nice": false,
+            "zero": false
+          }
+        },
+        "text": {
+          "field": "label"
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "data/vic_birthplace_trend.csv"
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "quantitative",
+          "title": "Census year",
+          "scale": {
+            "domain": [
+              1901,
+              2011
+            ],
+            "nice": false,
+            "zero": false
+          },
+          "axis": {
+            "format": "d",
+            "values": [
+              1901,
+              1921,
+              1947,
+              1961,
+              1981,
+              2001,
+              2011
+            ],
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "persons",
+          "type": "quantitative",
+          "title": "Victorians born there",
+          "scale": {
+            "domain": [
+              0,
+              260000
+            ]
+          },
+          "axis": {
+            "format": "~s",
+            "tickCount": 5
+          }
+        },
+        "color": {
+          "field": "group",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Britain",
+              "Ireland",
+              "Italy",
+              "Greece",
+              "India",
+              "China"
+            ],
+            "range": [
+              "#1a66a8",
+              "#1a66a8",
+              "#b07d10",
+              "#b07d10",
+              "#a23b72",
+              "#a23b72"
+            ]
+          },
+          "sort": [
+            "Britain",
+            "Ireland",
+            "Italy",
+            "Greece",
+            "India",
+            "China"
+          ],
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "symbolType": "stroke",
+            "symbolStrokeWidth": 2.5,
+            "symbolSize": 300,
+            "title": "Born in (click to highlight)"
+          }
+        },
+        "strokeDash": {
+          "field": "group",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Britain",
+              "Ireland",
+              "Italy",
+              "Greece",
+              "India",
+              "China"
+            ],
+            "range": [
+              [
+                1,
+                0
+              ],
+              [
+                6,
+                4
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                6,
+                4
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                6,
+                4
+              ]
+            ]
+          },
+          "sort": [
+            "Britain",
+            "Ireland",
+            "Italy",
+            "Greece",
+            "India",
+            "China"
+          ],
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "symbolType": "stroke",
+            "symbolStrokeWidth": 2.5,
+            "symbolSize": 300,
+            "title": "Born in (click to highlight)"
+          }
+        }
+      },
+      "layer": [
+        {
+          "params": [
+            {
+              "name": "pick",
+              "select": {
+                "type": "point",
+                "fields": [
+                  "group"
+                ]
+              },
+              "bind": "legend"
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 2.5
+          },
+          "encoding": {
+            "opacity": {
+              "condition": {
+                "param": "pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.12
+            }
+          }
+        },
+        {
+          "params": [
+            {
+              "name": "hover",
+              "select": {
+                "type": "point",
+                "fields": [
+                  "year"
+                ],
+                "on": "pointerover",
+                "nearest": true,
+                "clear": "pointerout"
+              }
+            }
+          ],
+          "mark": {
+            "type": "point",
+            "filled": true,
+            "size": 60
+          },
+          "encoding": {
+            "opacity": {
+              "condition": {
+                "param": "hover",
+                "empty": false,
+                "value": 1
+              },
+              "value": 0
+            },
+            "strokeDash": null,
+            "tooltip": [
+              {
+                "field": "group",
+                "title": "Born in"
+              },
+              {
+                "field": "year",
+                "title": "Census"
+              },
+              {
+                "field": "persons",
+                "type": "quantitative",
+                "format": ",",
+                "title": "Victorians"
+              }
+            ]
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.year === 2011"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 6,
+            "fontSize": 12,
+            "fontWeight": 600
+          },
+          "encoding": {
+            "text": {
+              "field": "group"
+            },
+            "strokeDash": null,
+            "opacity": {
+              "condition": {
+                "param": "pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "year": 1901,
+            "persons": 61512,
+            "tx": 1906,
+            "ty": 92000,
+            "align": "left",
+            "label": "Irish-born gold-rush generation|ages and dies out"
+          },
+          {
+            "year": 2011,
+            "persons": 111784,
+            "tx": 1999,
+            "ty": 150000,
+            "align": "right",
+            "label": "Skilled and student|migration from Asia"
+          }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "color": "#3b3226",
+        "strokeWidth": 1,
+        "opacity": 0.6
+      },
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1901,
+              2011
+            ],
+            "nice": false,
+            "zero": false
+          }
+        },
+        "y": {
+          "field": "persons",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "tx"
+        },
+        "y2": {
+          "field": "ty"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "year": 1901,
+            "persons": 61512,
+            "tx": 1906,
+            "ty": 92000,
+            "align": "left",
+            "label": "Irish-born gold-rush generation|ages and dies out"
           }
         ]
       },
@@ -237,24 +483,80 @@
         "font": "Source Serif 4",
         "fontSize": 12,
         "fontStyle": "italic",
-        "fill": "#7a5512",
-        "lineBreak": "\\n",
-        "align": "center"
+        "fill": "#3b3226",
+        "lineBreak": "|",
+        "baseline": "bottom",
+        "dy": -2,
+        "align": "left",
+        "dx": 3
       },
       "encoding": {
         "x": {
-          "field": "year",
-          "type": "quantitative"
+          "field": "tx",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1901,
+              2011
+            ],
+            "nice": false,
+            "zero": false
+          }
         },
         "y": {
-          "field": "persons",
+          "field": "ty",
           "type": "quantitative"
         },
         "text": {
           "field": "label"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "year": 2011,
+            "persons": 111784,
+            "tx": 1999,
+            "ty": 150000,
+            "align": "right",
+            "label": "Skilled and student|migration from Asia"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 12,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "lineBreak": "|",
+        "baseline": "bottom",
+        "dy": -2,
+        "align": "right",
+        "dx": -3
+      },
+      "encoding": {
+        "x": {
+          "field": "tx",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              1901,
+              2011
+            ],
+            "nice": false,
+            "zero": false
+          }
         },
-        "color": null,
-        "strokeDash": null
+        "y": {
+          "field": "ty",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
       }
     }
   ],
@@ -269,7 +571,7 @@
       "titleColor": "#3b3226",
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
+      "gridColor": "#e8decb",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "titleFontWeight": 600,
@@ -280,7 +582,8 @@
       "titleColor": "#3b3226",
       "labelFontSize": 12,
       "titleFontSize": 12,
-      "labelLimit": 240
+      "labelLimit": 260,
+      "symbolType": "circle"
     },
     "text": {
       "font": "Source Serif 4",

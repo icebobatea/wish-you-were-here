@@ -1,60 +1,49 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Overview+detail timeline: postcards by year; brush the lower strip to zoom.",
+  "description": "Overview+detail stacked bar chart: postcards per year by theme. Brush the lower strip to zoom; click the legend to highlight a theme.",
   "autosize": {
     "type": "fit",
     "contains": "padding",
     "resize": true
   },
   "padding": {
-    "left": 40,
-    "right": 10,
+    "left": 16,
+    "right": 12,
     "top": 10,
-    "bottom": 5
+    "bottom": 6
   },
   "data": {
-    "url": "data/postcards.csv"
+    "url": "data/postcards.csv",
+    "format": {
+      "parse": {
+        "year": "number"
+      }
+    }
   },
   "transform": [
     {
       "filter": "isValid(datum.year) && datum.year >= 1869"
-    },
-    {
-      "aggregate": [
-        {
-          "op": "count",
-          "as": "postcards"
-        }
-      ],
-      "groupby": [
-        "year"
-      ]
-    },
-    {
-      "calculate": "toNumber(datum.year) + 0.8",
-      "as": "year_end"
     }
   ],
   "vconcat": [
     {
       "width": "container",
-      "height": 240,
+      "height": 300,
       "layer": [
         {
           "data": {
             "values": [
               {
                 "start": 1900,
-                "end": 1919,
-                "mid": 1909.5,
-                "label": "The golden age, 1900–1919"
+                "end": 1919
               }
             ]
           },
           "mark": {
             "type": "rect",
             "fill": "#c08a1e",
-            "opacity": 0.12
+            "opacity": 0.1,
+            "clip": true
           },
           "encoding": {
             "x": {
@@ -70,23 +59,25 @@
           "data": {
             "values": [
               {
-                "mid": 1920.5,
-                "label": "← The golden age, 1900–1919"
+                "x": 1909.5,
+                "label": "The golden age, 1900–1919"
               }
             ]
           },
           "mark": {
             "type": "text",
-            "y": 12,
-            "align": "left",
+            "y": 4,
+            "baseline": "top",
             "font": "Source Serif 4",
             "fontSize": 12,
             "fontStyle": "italic",
-            "fill": "#7a5512"
+            "fill": "#7a5512",
+            "fontWeight": 600,
+            "clip": true
           },
           "encoding": {
             "x": {
-              "field": "mid",
+              "field": "x",
               "type": "quantitative"
             },
             "text": {
@@ -95,19 +86,50 @@
           }
         },
         {
+          "params": [
+            {
+              "name": "pick",
+              "select": {
+                "type": "point",
+                "fields": [
+                  "theme"
+                ]
+              },
+              "bind": "legend"
+            }
+          ],
+          "transform": [
+            {
+              "aggregate": [
+                {
+                  "op": "count",
+                  "as": "postcards"
+                }
+              ],
+              "groupby": [
+                "year",
+                "theme"
+              ]
+            },
+            {
+              "calculate": "datum.year + 0.85",
+              "as": "year_end"
+            },
+            {
+              "calculate": "indexof([\"Exhibition Building\", \"War & service\", \"Migration\", \"Everyday correspondence\", \"Other\"], datum.theme)",
+              "as": "order"
+            }
+          ],
           "mark": {
             "type": "bar",
-            "color": "#9b2c2c",
             "clip": true,
             "orient": "vertical"
           },
           "encoding": {
-            "x2": {
-              "field": "year_end"
-            },
             "x": {
               "field": "year",
               "type": "quantitative",
+              "title": null,
               "scale": {
                 "domain": {
                   "param": "brush"
@@ -118,16 +140,70 @@
               "axis": {
                 "format": "d",
                 "grid": false
-              },
-              "title": null
+              }
+            },
+            "x2": {
+              "field": "year_end"
             },
             "y": {
               "field": "postcards",
               "type": "quantitative",
+              "stack": "zero",
               "title": "Postcards",
+              "scale": {
+                "domain": [
+                  0,
+                  128
+                ]
+              },
               "axis": {
-                "tickCount": 4
+                "tickCount": 5
               }
+            },
+            "color": {
+              "field": "theme",
+              "type": "nominal",
+              "title": "Theme (click to highlight)",
+              "scale": {
+                "domain": [
+                  "Exhibition Building",
+                  "War & service",
+                  "Migration",
+                  "Everyday correspondence",
+                  "Other"
+                ],
+                "range": [
+                  "#b07d10",
+                  "#9b2c2c",
+                  "#1a66a8",
+                  "#4a8a32",
+                  "#a39a8a"
+                ]
+              },
+              "sort": [
+                "Exhibition Building",
+                "War & service",
+                "Migration",
+                "Everyday correspondence",
+                "Other"
+              ],
+              "legend": {
+                "orient": "top",
+                "direction": "horizontal",
+                "columns": 3,
+                "symbolType": "square"
+              }
+            },
+            "order": {
+              "field": "order"
+            },
+            "opacity": {
+              "condition": {
+                "param": "pick",
+                "empty": true,
+                "value": 1
+              },
+              "value": 0.15
             },
             "tooltip": [
               {
@@ -137,18 +213,210 @@
                 "format": "d"
               },
               {
+                "field": "theme",
+                "title": "Theme"
+              },
+              {
                 "field": "postcards",
                 "type": "quantitative",
                 "title": "Postcards"
               }
             ]
           }
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "year": 1880.4,
+                "n": 13,
+                "tx": 1871,
+                "ty": 40,
+                "align": "left",
+                "label": "1880: the building opens;|souvenirs carry its date"
+              },
+              {
+                "year": 1904.4,
+                "n": 48,
+                "tx": 1897,
+                "ty": 78,
+                "align": "right",
+                "label": "1904–05: the Flinns write|to Paisley, Scotland"
+              },
+              {
+                "year": 1905.4,
+                "n": 96,
+                "tx": 1897,
+                "ty": 100,
+                "align": "right",
+                "label": "'circa 1905' souvenirs|pile onto one year"
+              },
+              {
+                "year": 1916.4,
+                "n": 110,
+                "tx": 1923,
+                "ty": 100,
+                "align": "left",
+                "label": "1916: soldiers' cards from Egypt|and Mesopotamia ('1916–19' sets)"
+              },
+              {
+                "year": 1951.4,
+                "n": 8,
+                "tx": 1952,
+                "ty": 48,
+                "align": "left",
+                "label": "1950s: cards bought on|migrant voyages"
+              },
+              {
+                "year": 2004.4,
+                "n": 6,
+                "tx": 1996,
+                "ty": 36,
+                "align": "right",
+                "label": "2000s: protest and|event cards"
+              }
+            ]
+          },
+          "mark": {
+            "type": "rule",
+            "color": "#3b3226",
+            "strokeWidth": 1,
+            "opacity": 0.6
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "n",
+              "type": "quantitative"
+            },
+            "x2": {
+              "field": "tx"
+            },
+            "y2": {
+              "field": "ty"
+            }
+          }
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "year": 1880.4,
+                "n": 13,
+                "tx": 1871,
+                "ty": 40,
+                "align": "left",
+                "label": "1880: the building opens;|souvenirs carry its date"
+              },
+              {
+                "year": 1916.4,
+                "n": 110,
+                "tx": 1923,
+                "ty": 100,
+                "align": "left",
+                "label": "1916: soldiers' cards from Egypt|and Mesopotamia ('1916–19' sets)"
+              },
+              {
+                "year": 1951.4,
+                "n": 8,
+                "tx": 1952,
+                "ty": 48,
+                "align": "left",
+                "label": "1950s: cards bought on|migrant voyages"
+              }
+            ]
+          },
+          "mark": {
+            "type": "text",
+            "font": "Source Serif 4",
+            "fontSize": 12,
+            "fontStyle": "italic",
+            "fill": "#3b3226",
+            "lineBreak": "|",
+            "baseline": "bottom",
+            "dy": -2,
+            "align": "left",
+            "dx": 3,
+            "clip": true
+          },
+          "encoding": {
+            "x": {
+              "field": "tx",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "ty",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "label"
+            }
+          }
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "year": 1904.4,
+                "n": 48,
+                "tx": 1897,
+                "ty": 78,
+                "align": "right",
+                "label": "1904–05: the Flinns write|to Paisley, Scotland"
+              },
+              {
+                "year": 1905.4,
+                "n": 96,
+                "tx": 1897,
+                "ty": 100,
+                "align": "right",
+                "label": "'circa 1905' souvenirs|pile onto one year"
+              },
+              {
+                "year": 2004.4,
+                "n": 6,
+                "tx": 1996,
+                "ty": 36,
+                "align": "right",
+                "label": "2000s: protest and|event cards"
+              }
+            ]
+          },
+          "mark": {
+            "type": "text",
+            "font": "Source Serif 4",
+            "fontSize": 12,
+            "fontStyle": "italic",
+            "fill": "#3b3226",
+            "lineBreak": "|",
+            "baseline": "bottom",
+            "dy": -2,
+            "align": "right",
+            "dx": -3,
+            "clip": true
+          },
+          "encoding": {
+            "x": {
+              "field": "tx",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "ty",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "label"
+            }
+          }
         }
       ]
     },
     {
       "width": "container",
-      "height": 50,
+      "height": 46,
       "params": [
         {
           "name": "brush",
@@ -160,10 +428,23 @@
           },
           "value": {
             "x": [
-              1880,
+              1872,
               2017
             ]
           }
+        }
+      ],
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "count",
+              "as": "postcards"
+            }
+          ],
+          "groupby": [
+            "year"
+          ]
         }
       ],
       "mark": {
@@ -175,10 +456,11 @@
         "x": {
           "field": "year",
           "type": "quantitative",
+          "title": "Drag here to zoom the chart above",
           "scale": {
             "domain": [
               1869,
-              2017
+              2018
             ],
             "nice": false,
             "zero": false
@@ -186,9 +468,11 @@
           "axis": {
             "format": "d",
             "grid": false,
-            "tickCount": 8
-          },
-          "title": null
+            "tickCount": 8,
+            "titleFontWeight": 400,
+            "titleFontStyle": "italic",
+            "titleColor": "#6e6253"
+          }
         },
         "y": {
           "field": "postcards",
@@ -198,7 +482,7 @@
       }
     }
   ],
-  "spacing": 14,
+  "spacing": 10,
   "config": {
     "background": "transparent",
     "view": {
@@ -210,7 +494,7 @@
       "titleColor": "#3b3226",
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
+      "gridColor": "#e8decb",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "titleFontWeight": 600,
@@ -221,7 +505,8 @@
       "titleColor": "#3b3226",
       "labelFontSize": 12,
       "titleFontSize": 12,
-      "labelLimit": 240
+      "labelLimit": 260,
+      "symbolType": "circle"
     },
     "text": {
       "font": "Source Serif 4",

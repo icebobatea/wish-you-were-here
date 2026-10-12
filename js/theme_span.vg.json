@@ -1,92 +1,19 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Range plot: earliest to latest year for each theme, with the middle half of its cards.",
+  "description": "Range plot: earliest to latest year for each theme and the years holding the middle half of its cards, against key events.",
   "autosize": {
     "type": "fit",
     "contains": "padding",
     "resize": true
   },
   "padding": {
-    "left": 40,
-    "right": 10,
-    "top": 10,
-    "bottom": 5
+    "left": 8,
+    "right": 12,
+    "top": 34,
+    "bottom": 30
   },
   "width": "container",
-  "height": 230,
-  "data": {
-    "url": "data/theme_span.csv"
-  },
-  "encoding": {
-    "y": {
-      "field": "theme",
-      "type": "nominal",
-      "title": null,
-      "sort": [
-        "Exhibition Building",
-        "War & service",
-        "Migration",
-        "Everyday correspondence",
-        "Other"
-      ],
-      "axis": {
-        "domain": false,
-        "ticks": false,
-        "labelPadding": 8
-      }
-    },
-    "color": {
-      "field": "theme",
-      "type": "nominal",
-      "scale": {
-        "domain": [
-          "Exhibition Building",
-          "War & service",
-          "Migration",
-          "Everyday correspondence",
-          "Other"
-        ],
-        "range": [
-          "#b07d10",
-          "#9b2c2c",
-          "#1a66a8",
-          "#4a8a32",
-          "#a39a8a"
-        ]
-      },
-      "legend": null
-    },
-    "tooltip": [
-      {
-        "field": "theme",
-        "title": "Theme"
-      },
-      {
-        "field": "first",
-        "title": "Earliest card",
-        "format": "d"
-      },
-      {
-        "field": "last",
-        "title": "Latest card",
-        "format": "d"
-      },
-      {
-        "field": "mid_start",
-        "title": "Middle half from",
-        "format": "d"
-      },
-      {
-        "field": "mid_end",
-        "title": "Middle half to",
-        "format": "d"
-      },
-      {
-        "field": "cards",
-        "title": "Dated cards"
-      }
-    ]
-  },
+  "height": 250,
   "layer": [
     {
       "data": {
@@ -100,7 +27,7 @@
       "mark": {
         "type": "rect",
         "fill": "#9b2c2c",
-        "opacity": 0.08
+        "opacity": 0.1
       },
       "encoding": {
         "x": {
@@ -113,14 +40,16 @@
             ],
             "nice": false,
             "zero": false
+          },
+          "title": null,
+          "axis": {
+            "format": "d",
+            "tickCount": 8
           }
         },
         "x2": {
           "field": "end"
-        },
-        "y": null,
-        "color": null,
-        "tooltip": null
+        }
       }
     },
     {
@@ -134,11 +63,12 @@
       },
       "mark": {
         "type": "text",
-        "y": -8,
         "font": "Source Serif 4",
         "fontSize": 12,
         "fontStyle": "italic",
-        "fill": "#9b2c2c"
+        "fill": "#9b2c2c",
+        "fontWeight": 700,
+        "y": -26
       },
       "encoding": {
         "x": {
@@ -147,56 +77,205 @@
         },
         "text": {
           "field": "label"
-        },
-        "y": null,
-        "color": null,
-        "tooltip": null
+        }
       }
     },
     {
+      "data": {
+        "values": [
+          {
+            "year": 1880,
+            "label": "1880 Exhibition opens",
+            "row": 0
+          },
+          {
+            "year": 1901,
+            "label": "1901 first Parliament sits here",
+            "row": 1
+          },
+          {
+            "year": 1947,
+            "label": "1947 post-war migration scheme",
+            "row": 0
+          },
+          {
+            "year": 1973,
+            "label": "1973 White Australia policy ends",
+            "row": 1
+          }
+        ]
+      },
       "mark": {
         "type": "rule",
-        "strokeWidth": 2,
-        "opacity": 0.6
+        "strokeDash": [
+          3,
+          3
+        ],
+        "color": "#6e6253"
       },
       "encoding": {
         "x": {
-          "field": "first",
-          "type": "quantitative",
-          "title": null,
-          "scale": {
-            "domain": [
-              1865,
-              2020
-            ],
-            "nice": false,
-            "zero": false
-          },
-          "axis": {
-            "format": "d",
-            "tickCount": 8
-          }
-        },
-        "x2": {
-          "field": "last"
+          "field": "year",
+          "type": "quantitative"
         }
       }
     },
     {
+      "data": {
+        "values": [
+          {
+            "year": 1880,
+            "label": "1880 Exhibition opens",
+            "row": 0
+          },
+          {
+            "year": 1901,
+            "label": "1901 first Parliament sits here",
+            "row": 1
+          },
+          {
+            "year": 1947,
+            "label": "1947 post-war migration scheme",
+            "row": 0
+          },
+          {
+            "year": 1973,
+            "label": "1973 White Australia policy ends",
+            "row": 1
+          }
+        ]
+      },
       "mark": {
-        "type": "bar",
-        "height": 16,
-        "cornerRadius": 4
+        "type": "text",
+        "font": "Source Serif 4",
+        "fontSize": 11,
+        "fontStyle": "italic",
+        "fill": "#3b3226",
+        "align": "left",
+        "dx": 4,
+        "y": {
+          "expr": "datum.row === 0 ? -10 : height + 30"
+        }
       },
       "encoding": {
         "x": {
-          "field": "mid_start",
+          "field": "year",
           "type": "quantitative"
         },
-        "x2": {
-          "field": "mid_end"
+        "text": {
+          "field": "label"
         }
       }
+    },
+    {
+      "data": {
+        "url": "data/theme_span.csv"
+      },
+      "encoding": {
+        "y": {
+          "field": "theme",
+          "type": "nominal",
+          "title": null,
+          "sort": [
+            "Exhibition Building",
+            "War & service",
+            "Migration",
+            "Everyday correspondence",
+            "Other"
+          ],
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "labelPadding": 8,
+            "minExtent": 175
+          }
+        },
+        "color": {
+          "field": "theme",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Exhibition Building",
+              "War & service",
+              "Migration",
+              "Everyday correspondence",
+              "Other"
+            ],
+            "range": [
+              "#b07d10",
+              "#9b2c2c",
+              "#1a66a8",
+              "#4a8a32",
+              "#a39a8a"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "theme",
+            "title": "Theme"
+          },
+          {
+            "field": "first",
+            "title": "Earliest card",
+            "format": "d"
+          },
+          {
+            "field": "last",
+            "title": "Latest card",
+            "format": "d"
+          },
+          {
+            "field": "mid_start",
+            "title": "Middle half from",
+            "format": "d"
+          },
+          {
+            "field": "mid_end",
+            "title": "Middle half to",
+            "format": "d"
+          },
+          {
+            "field": "cards",
+            "title": "Dated cards"
+          }
+        ]
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "rule",
+            "strokeWidth": 2,
+            "opacity": 0.55
+          },
+          "encoding": {
+            "x": {
+              "field": "first",
+              "type": "quantitative"
+            },
+            "x2": {
+              "field": "last"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "bar",
+            "height": 16,
+            "cornerRadius": 4
+          },
+          "encoding": {
+            "x": {
+              "field": "mid_start",
+              "type": "quantitative"
+            },
+            "x2": {
+              "field": "mid_end"
+            }
+          }
+        }
+      ]
     }
   ],
   "config": {
@@ -210,7 +289,7 @@
       "titleColor": "#3b3226",
       "domainColor": "#b9ad97",
       "tickColor": "#b9ad97",
-      "gridColor": "#ece4d3",
+      "gridColor": "#e8decb",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "titleFontWeight": 600,
@@ -221,7 +300,8 @@
       "titleColor": "#3b3226",
       "labelFontSize": 12,
       "titleFontSize": 12,
-      "labelLimit": 240
+      "labelLimit": 260,
+      "symbolType": "circle"
     },
     "text": {
       "font": "Source Serif 4",
