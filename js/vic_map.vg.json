@@ -265,6 +265,7 @@
         {
           "type": "force",
           "static": true,
+          "restart": true,
           "iterations": 300,
           "forces": [
             {
