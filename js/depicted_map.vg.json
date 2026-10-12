@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "Zoomable proportional symbol map: countries pictured on postcards in the Museums Victoria collection.",
+  "description": "Zoomable Dorling cartogram: countries pictured on postcards, circles pushed apart so none overlap.",
   "autosize": "none",
   "padding": 0,
   "signals": [
@@ -201,19 +201,53 @@
             "latitude"
           ],
           "as": [
-            "x",
-            "y"
+            "tx",
+            "ty"
           ]
-        }
-      ]
-    },
-    {
-      "name": "labelled",
-      "source": "places",
-      "transform": [
+        },
         {
-          "type": "filter",
-          "expr": "datum.postcards >= 4"
+          "type": "formula",
+          "as": "x",
+          "expr": "datum.tx"
+        },
+        {
+          "type": "formula",
+          "as": "y",
+          "expr": "datum.ty"
+        },
+        {
+          "type": "formula",
+          "as": "r",
+          "expr": "sqrt(scale('size', datum.postcards)) / 2"
+        },
+        {
+          "type": "formula",
+          "as": "rr",
+          "expr": "datum.r + 1.5"
+        },
+        {
+          "type": "force",
+          "static": true,
+          "iterations": 300,
+          "forces": [
+            {
+              "force": "collide",
+              "radius": {
+                "field": "rr"
+              },
+              "iterations": 3
+            },
+            {
+              "force": "x",
+              "x": "tx",
+              "strength": 0.3
+            },
+            {
+              "force": "y",
+              "y": "ty",
+              "strength": 0.3
+            }
+          ]
         }
       ]
     }
@@ -226,7 +260,7 @@
         "Exhibition Building",
         "War & service",
         "Migration",
-        "Everyday correspondence",
+        "Correspondence",
         "Other"
       ],
       "range": [
@@ -255,8 +289,9 @@
     {
       "fill": "theme",
       "title": "Most common theme",
-      "orient": "top-left",
+      "orient": "bottom-right",
       "symbolType": "circle",
+      "offset": 16,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
@@ -327,6 +362,41 @@
       ]
     },
     {
+      "type": "rule",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "stroke": {
+            "value": "#3b3226"
+          },
+          "strokeWidth": {
+            "value": 0.8
+          },
+          "strokeOpacity": {
+            "value": 0.55
+          }
+        },
+        "update": {
+          "x": {
+            "field": "tx"
+          },
+          "y": {
+            "field": "ty"
+          },
+          "x2": {
+            "field": "x"
+          },
+          "y2": {
+            "field": "y"
+          }
+        }
+      }
+    },
+    {
       "type": "symbol",
       "name": "dots",
       "from": {
@@ -382,6 +452,102 @@
     },
     {
       "type": "text",
+      "name": "fixed_labels_halo",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fontSize": {
+            "value": 12
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "fill": {
+            "value": "#f4ecdb"
+          },
+          "stroke": {
+            "value": "#f4ecdb"
+          },
+          "strokeWidth": {
+            "value": 4
+          },
+          "strokeJoin": {
+            "value": "round"
+          }
+        },
+        "update": {
+          "x": {
+            "signal": "datum.x + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? datum.r + 5 : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? -datum.r - 5 : 0)"
+          },
+          "y": {
+            "signal": "datum.y + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'bottom' ? datum.r + 10 : 0)"
+          },
+          "align": {
+            "signal": "({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? 'left' : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? 'right' : 'center'"
+          },
+          "text": {
+            "signal": "{'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] != null ? datum.country : ''"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "name": "fixed_labels",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fontSize": {
+            "value": 12
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "fill": {
+            "value": "#3b3226"
+          },
+          "stroke": {
+            "value": null
+          },
+          "strokeWidth": {
+            "value": 0
+          },
+          "strokeJoin": {
+            "value": "round"
+          }
+        },
+        "update": {
+          "x": {
+            "signal": "datum.x + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? datum.r + 5 : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? -datum.r - 5 : 0)"
+          },
+          "y": {
+            "signal": "datum.y + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'bottom' ? datum.r + 10 : 0)"
+          },
+          "align": {
+            "signal": "({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? 'left' : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? 'right' : 'center'"
+          },
+          "text": {
+            "signal": "{'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] != null ? datum.country : ''"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
       "name": "place_labels_halo",
       "from": {
         "data": "places"
@@ -411,13 +577,13 @@
         },
         "update": {
           "x": {
-            "signal": "datum.x + sqrt(scale('size', datum.postcards)) / 2"
+            "signal": "datum.x + datum.r"
           },
           "y": {
             "field": "y"
           },
           "text": {
-            "signal": "datum.postcards >= 4 ? datum.country : ''"
+            "signal": "(datum.postcards >= 2 || zoom > 3) && {'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] == null ? datum.country : ''"
           }
         }
       },
@@ -425,7 +591,8 @@
         {
           "type": "label",
           "avoidMarks": [
-            "dots"
+            "dots",
+            "fixed_labels_halo"
           ],
           "size": {
             "signal": "[width, height]"
@@ -487,20 +654,22 @@
   "config": {
     "background": "transparent",
     "text": {
-      "font": "Source Serif 4",
+      "font": "'Source Serif 4', Georgia, serif",
       "fill": "#3b3226"
     },
     "legend": {
-      "labelFont": "Source Serif 4",
-      "titleFont": "Source Serif 4",
+      "labelFont": "'Source Serif 4', Georgia, serif",
+      "titleFont": "'Source Serif 4', Georgia, serif",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "labelColor": "#3b3226",
       "titleColor": "#3b3226",
       "fillColor": "#f4ecdbe6",
-      "padding": 8,
+      "padding": 10,
       "cornerRadius": 4,
-      "labelLimit": 220
+      "labelLimit": 220,
+      "labelOffset": 6,
+      "rowPadding": 3
     }
   }
 }

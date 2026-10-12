@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "Zoomable dot map: Victorian places linked to postcards (made, sent, used or pictured).",
+  "description": "Zoomable Dorling cartogram: Victorian places linked to postcards, circles pushed apart so none overlap.",
   "autosize": "none",
   "padding": 0,
   "signals": [
@@ -224,6 +224,13 @@
       },
       "transform": [
         {
+          "type": "collect",
+          "sort": {
+            "field": "postcards",
+            "order": "descending"
+          }
+        },
+        {
           "type": "geopoint",
           "projection": "projection",
           "fields": [
@@ -231,16 +238,53 @@
             "lat"
           ],
           "as": [
-            "x",
-            "y"
+            "tx",
+            "ty"
           ]
         },
         {
-          "type": "collect",
-          "sort": {
-            "field": "postcards",
-            "order": "descending"
-          }
+          "type": "formula",
+          "as": "x",
+          "expr": "datum.tx"
+        },
+        {
+          "type": "formula",
+          "as": "y",
+          "expr": "datum.ty"
+        },
+        {
+          "type": "formula",
+          "as": "r",
+          "expr": "sqrt(scale('size', datum.postcards)) / 2"
+        },
+        {
+          "type": "formula",
+          "as": "rr",
+          "expr": "datum.r + 1.5"
+        },
+        {
+          "type": "force",
+          "static": true,
+          "iterations": 300,
+          "forces": [
+            {
+              "force": "collide",
+              "radius": {
+                "field": "rr"
+              },
+              "iterations": 3
+            },
+            {
+              "force": "x",
+              "x": "tx",
+              "strength": 0.3
+            },
+            {
+              "force": "y",
+              "y": "ty",
+              "strength": 0.3
+            }
+          ]
         }
       ]
     }
@@ -253,7 +297,7 @@
         "Exhibition Building",
         "War & service",
         "Migration",
-        "Everyday correspondence",
+        "Correspondence",
         "Other"
       ],
       "range": [
@@ -284,6 +328,7 @@
       "title": "Most common theme",
       "orient": "top-right",
       "symbolType": "circle",
+      "offset": 16,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
@@ -323,7 +368,8 @@
         300
       ],
       "symbolFillColor": "#b9ad97",
-      "symbolStrokeColor": "#fbf7ef"
+      "symbolStrokeColor": "#fbf7ef",
+      "offset": 16
     }
   ],
   "marks": [
@@ -352,6 +398,41 @@
           "projection": "projection"
         }
       ]
+    },
+    {
+      "type": "rule",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "stroke": {
+            "value": "#3b3226"
+          },
+          "strokeWidth": {
+            "value": 0.8
+          },
+          "strokeOpacity": {
+            "value": 0.55
+          }
+        },
+        "update": {
+          "x": {
+            "field": "tx"
+          },
+          "y": {
+            "field": "ty"
+          },
+          "x2": {
+            "field": "x"
+          },
+          "y2": {
+            "field": "y"
+          }
+        }
+      }
     },
     {
       "type": "symbol",
@@ -409,6 +490,102 @@
     },
     {
       "type": "text",
+      "name": "big_labels_halo",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fontSize": {
+            "value": 11
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "fill": {
+            "value": "#f4ecdb"
+          },
+          "stroke": {
+            "value": "#f4ecdb"
+          },
+          "strokeWidth": {
+            "value": 4
+          },
+          "strokeJoin": {
+            "value": "round"
+          }
+        },
+        "update": {
+          "x": {
+            "signal": "datum.x + (('center') === 'right' ? datum.r + 5 : ('center') === 'left' ? -datum.r - 5 : 0)"
+          },
+          "y": {
+            "signal": "datum.y + (('center') === 'bottom' ? datum.r + 10 : 0)"
+          },
+          "align": {
+            "signal": "('center') === 'right' ? 'left' : ('center') === 'left' ? 'right' : 'center'"
+          },
+          "text": {
+            "signal": "datum.r >= 16 ? datum.place : ''"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "name": "big_labels",
+      "from": {
+        "data": "places"
+      },
+      "clip": true,
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fontSize": {
+            "value": 11
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "fill": {
+            "value": "#3b3226"
+          },
+          "stroke": {
+            "value": null
+          },
+          "strokeWidth": {
+            "value": 0
+          },
+          "strokeJoin": {
+            "value": "round"
+          }
+        },
+        "update": {
+          "x": {
+            "signal": "datum.x + (('center') === 'right' ? datum.r + 5 : ('center') === 'left' ? -datum.r - 5 : 0)"
+          },
+          "y": {
+            "signal": "datum.y + (('center') === 'bottom' ? datum.r + 10 : 0)"
+          },
+          "align": {
+            "signal": "('center') === 'right' ? 'left' : ('center') === 'left' ? 'right' : 'center'"
+          },
+          "text": {
+            "signal": "datum.r >= 16 ? datum.place : ''"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
       "name": "place_labels_halo",
       "from": {
         "data": "places"
@@ -438,13 +615,13 @@
         },
         "update": {
           "x": {
-            "signal": "datum.x + sqrt(scale('size', datum.postcards)) / 2"
+            "signal": "datum.x + datum.r"
           },
           "y": {
             "field": "y"
           },
           "text": {
-            "signal": "datum.postcards >= 3 || zoom > 4 ? datum.place : ''"
+            "signal": "(datum.postcards >= 3 || zoom > 4) && datum.r < 16 ? datum.place : ''"
           }
         }
       },
@@ -452,7 +629,8 @@
         {
           "type": "label",
           "avoidMarks": [
-            "dots"
+            "dots",
+            "big_labels_halo"
           ],
           "size": {
             "signal": "[width, height]"
@@ -514,20 +692,22 @@
   "config": {
     "background": "transparent",
     "text": {
-      "font": "Source Serif 4",
+      "font": "'Source Serif 4', Georgia, serif",
       "fill": "#3b3226"
     },
     "legend": {
-      "labelFont": "Source Serif 4",
-      "titleFont": "Source Serif 4",
+      "labelFont": "'Source Serif 4', Georgia, serif",
+      "titleFont": "'Source Serif 4', Georgia, serif",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "labelColor": "#3b3226",
       "titleColor": "#3b3226",
       "fillColor": "#f4ecdbe6",
-      "padding": 8,
+      "padding": 10,
       "cornerRadius": 4,
-      "labelLimit": 220
+      "labelLimit": 220,
+      "labelOffset": 6,
+      "rowPadding": 3
     }
   }
 }
