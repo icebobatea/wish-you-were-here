@@ -38,7 +38,7 @@
         </div>
         <figure>
           <div id="depicted_map" class="chart"></div>
-          <figcaption>Each circle is a country pictured on the cards, sized by how many cards show it and coloured by their most common theme.</figcaption>
+          <figcaption>Each circle is a country pictured on the cards, sized by how many cards show it and coloured by their most common theme. Circles are nudged apart so none overlap (a Dorling cartogram); a thin line points back to the true location.</figcaption>
         </figure>
       </div>
     </section>
@@ -48,7 +48,7 @@
       <div class="row">
         <div class="text">
           <p>Seven in ten dated cards come from just twenty years, 1900–1919, when cards were cheap to print and cheap to post. But the spikes inside that boom have two very different causes.</p>
-          <p><strong>Real people writing.</strong> From 1904, Marion and Janet Flinn in Melbourne sent card after card to the Scott family in Paisley: Collins Street, the Town Hall, the Black Spur. Their 52 cards make up most of the museum's "everyday correspondence".</p>
+          <p><strong>Real people writing.</strong> From 1904, Marion and Janet Flinn in Melbourne sent card after card to the Scott family in Paisley: Collins Street, the Town Hall, the Black Spur. Their 52 cards make up most of the museum's correspondence cards.</p>
           <p><strong>Curators guessing.</strong> An undated card gets a best estimate such as "circa 1905" or "1916–1919", and the guesses pile onto one year. 77 of the 96 cards dated 1905 are estimates, so treat the tallest bars as rough.</p>
         </div>
         <figure>
@@ -139,7 +139,7 @@
         </div>
         <figure>
           <div id="flow_map" class="chart"></div>
-          <figcaption>Arrow thickness shows how many cards travelled along each route. Places are approximate (city or country).</figcaption>
+          <figcaption>Arrow thickness shows how many cards travelled along each route; arrowheads point at the recipient. Places are approximate (city or country). Zoom into Europe to separate Paisley, London and Paris.</figcaption>
         </figure>
       </div>
       <div class="row">
@@ -174,7 +174,7 @@
         </div>
         <figure>
           <div id="vic_map" class="chart"></div>
-          <figcaption>Victorian places linked to a card: where it was made, sent or used, or what it pictures. Circle size is the number of cards; colour is their most common theme.</figcaption>
+          <figcaption>Victorian places linked to a card: where it was made, sent or used, or what it pictures. Circle size is the number of cards; colour is their most common theme. Circles are nudged apart so none overlap; thin lines point back to each true location.</figcaption>
         </figure>
       </div>
     </section>
@@ -197,10 +197,28 @@
     const charts = ["depicted_map", "timeline", "heatmap", "waffle", "dumbbell", "collections",
                     "theme_span", "depicted_by_theme", "flow_map", "birthplace_map",
                     "birthplace_trend", "vic_map"];
-    // wait for the web fonts so Vega measures labels with the right font
-    document.fonts.ready.then(() => {
-      charts.forEach(id => vegaEmbed("#" + id, "js/" + id + ".vg.json", {actions: false, renderer: "svg"}));
-    });
+    const opts = {actions: false, renderer: "svg"};
+
+    // Load the web fonts before drawing, so Vega measures labels and legends
+    // with the real font (otherwise text can overflow its legend box).
+    const fonts = ['12px "Source Serif 4"', '600 12px "Source Serif 4"', '700 12px "Source Serif 4"',
+                   'italic 12px "Source Serif 4"', '13px "Playfair Display"'];
+
+    async function draw(id) {
+      const el = document.getElementById(id);
+      const spec = await (await fetch("js/" + id + ".vg.json")).json();
+      // Stacked views (the timeline) cannot use width "container" exactly,
+      // so give each view the box width minus room for the y axis.
+      if (spec.vconcat) {
+        const w = Math.max(280, el.clientWidth - 80);
+        spec.vconcat.forEach(view => { view.width = w; });
+      }
+      return vegaEmbed(el, spec, opts);
+    }
+
+    Promise.all(fonts.map(f => document.fonts.load(f)))
+      .catch(() => null)
+      .then(() => charts.forEach(draw));
   </script>
 </body>
 </html>

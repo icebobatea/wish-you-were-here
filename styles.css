@@ -143,7 +143,8 @@ figure {
   min-width: 0;
 }
 
-figure.center .chart, figure.center > div:first-child { display: flex; justify-content: center; }
+figure.center > div:first-child { display: flex; justify-content: center; }
+figure.center .vega-embed { flex: none; }
 
 .chart { width: 100%; overflow-x: auto; }
 
