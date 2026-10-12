@@ -22,13 +22,14 @@
       "params": [
         {
           "name": "pick",
+          "bind": "legend",
           "select": {
             "type": "point",
             "fields": [
               "theme"
-            ]
-          },
-          "bind": "legend"
+            ],
+            "toggle": "true"
+          }
         }
       ],
       "transform": [
@@ -36,7 +37,7 @@
           "filter": "datum.depicted_country !== 'Australia'"
         },
         {
-          "calculate": "indexof([\"Exhibition Building\", \"War & service\", \"Migration\", \"Everyday correspondence\", \"Other\"], datum.theme)",
+          "calculate": "indexof([\"Exhibition Building\", \"War & service\", \"Migration\", \"Correspondence\", \"Other\"], datum.theme)",
           "as": "order"
         }
       ],
@@ -99,7 +100,7 @@
               "Exhibition Building",
               "War & service",
               "Migration",
-              "Everyday correspondence",
+              "Correspondence",
               "Other"
             ],
             "range": [
@@ -114,12 +115,12 @@
             "Exhibition Building",
             "War & service",
             "Migration",
-            "Everyday correspondence",
+            "Correspondence",
             "Other"
           ],
           "legend": {
             "orient": "bottom",
-            "columns": 3,
+            "columns": 5,
             "symbolType": "square"
           }
         },
@@ -179,7 +180,7 @@
       },
       "mark": {
         "type": "text",
-        "font": "Source Serif 4",
+        "font": "'Source Serif 4', Georgia, serif",
         "fontSize": 12,
         "fontStyle": "italic",
         "fill": "#3b3226",
@@ -216,7 +217,7 @@
     "view": {
       "stroke": null
     },
-    "font": "Source Serif 4",
+    "font": "'Source Serif 4', Georgia, serif",
     "axis": {
       "labelColor": "#3b3226",
       "titleColor": "#3b3226",
@@ -234,10 +235,14 @@
       "labelFontSize": 12,
       "titleFontSize": 12,
       "labelLimit": 260,
-      "symbolType": "circle"
+      "symbolType": "circle",
+      "columnPadding": 28,
+      "rowPadding": 6,
+      "labelOffset": 6,
+      "padding": 4
     },
     "text": {
-      "font": "Source Serif 4",
+      "font": "'Source Serif 4', Georgia, serif",
       "color": "#3b3226"
     }
   }

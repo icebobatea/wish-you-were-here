@@ -51,7 +51,7 @@
         "Exhibition Building",
         "War & service",
         "Migration",
-        "Everyday correspondence",
+        "Correspondence",
         "Other"
       ],
       "axis": {
@@ -177,7 +177,7 @@
         "values": [
           {
             "decade_label": "1900s",
-            "theme": "Everyday correspondence",
+            "theme": "Correspondence",
             "tag": "A"
           },
           {
@@ -214,7 +214,7 @@
         "values": [
           {
             "decade_label": "1900s",
-            "theme": "Everyday correspondence",
+            "theme": "Correspondence",
             "tag": "A"
           },
           {
@@ -260,7 +260,7 @@
     "view": {
       "stroke": null
     },
-    "font": "Source Serif 4",
+    "font": "'Source Serif 4', Georgia, serif",
     "axis": {
       "labelColor": "#3b3226",
       "titleColor": "#3b3226",
@@ -278,10 +278,14 @@
       "labelFontSize": 12,
       "titleFontSize": 12,
       "labelLimit": 260,
-      "symbolType": "circle"
+      "symbolType": "circle",
+      "columnPadding": 28,
+      "rowPadding": 6,
+      "labelOffset": 6,
+      "padding": 4
     },
     "text": {
-      "font": "Source Serif 4",
+      "font": "'Source Serif 4', Georgia, serif",
       "color": "#3b3226"
     }
   }
