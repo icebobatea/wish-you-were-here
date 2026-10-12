@@ -214,23 +214,33 @@
         },
         {
           "type": "formula",
-          "as": "path",
-          "expr": "'M' + datum.fx + ',' + datum.fy + 'Q' + datum.cx + ',' + datum.cy + ' ' + datum.tx + ',' + datum.ty"
-        },
-        {
-          "type": "formula",
           "as": "angle",
           "expr": "atan2(datum.ty - datum.cy, datum.tx - datum.cx) * 180 / PI"
         },
         {
           "type": "formula",
           "as": "ax",
-          "expr": "datum.tx - 7 * cos((datum.angle) * PI / 180)"
+          "expr": "datum.tx - 11 * cos(datum.angle * PI / 180)"
         },
         {
           "type": "formula",
           "as": "ay",
-          "expr": "datum.ty - 7 * sin((datum.angle) * PI / 180)"
+          "expr": "datum.ty - 11 * sin(datum.angle * PI / 180)"
+        },
+        {
+          "type": "formula",
+          "as": "ex",
+          "expr": "datum.tx - 15 * cos(datum.angle * PI / 180)"
+        },
+        {
+          "type": "formula",
+          "as": "ey",
+          "expr": "datum.ty - 15 * sin(datum.angle * PI / 180)"
+        },
+        {
+          "type": "formula",
+          "as": "path",
+          "expr": "'M' + datum.fx + ',' + datum.fy + 'Q' + datum.cx + ',' + datum.cy + ' ' + datum.ex + ',' + datum.ey"
         }
       ]
     },
@@ -278,8 +288,8 @@
         52
       ],
       "range": [
-        60,
-        420
+        70,
+        360
       ]
     }
   ],
@@ -456,7 +466,7 @@
         },
         "update": {
           "x": {
-            "signal": "datum.x + 4"
+            "signal": "datum.x"
           },
           "y": {
             "field": "y"
@@ -470,20 +480,31 @@
         {
           "type": "label",
           "avoidMarks": [
-            "ends"
+            "ends",
+            "arrowheads"
           ],
           "size": {
             "signal": "[width, height]"
           },
           "anchor": [
             "right",
+            "left",
+            "top",
+            "bottom",
             "top-right",
-            "bottom-right"
+            "top-left",
+            "bottom-right",
+            "bottom-left"
           ],
           "offset": [
+            5,
+            5,
+            4,
+            4,
             3,
-            2,
-            2
+            3,
+            3,
+            3
           ]
         }
       ]
@@ -532,20 +553,22 @@
   "config": {
     "background": "transparent",
     "text": {
-      "font": "Source Serif 4",
+      "font": "'Source Serif 4', Georgia, serif",
       "fill": "#3b3226"
     },
     "legend": {
-      "labelFont": "Source Serif 4",
-      "titleFont": "Source Serif 4",
+      "labelFont": "'Source Serif 4', Georgia, serif",
+      "titleFont": "'Source Serif 4', Georgia, serif",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "labelColor": "#3b3226",
       "titleColor": "#3b3226",
       "fillColor": "#f4ecdbe6",
-      "padding": 8,
+      "padding": 10,
       "cornerRadius": 4,
-      "labelLimit": 220
+      "labelLimit": 220,
+      "labelOffset": 6,
+      "rowPadding": 3
     }
   }
 }

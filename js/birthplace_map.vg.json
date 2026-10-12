@@ -244,8 +244,8 @@
         120000
       ],
       "range": [
-        "#d9e6f2",
-        "#0d3a66"
+        "#f3e4c4",
+        "#6b2a12"
       ],
       "interpolate": "lab"
     }
@@ -297,7 +297,7 @@
               "field": "persons"
             },
             {
-              "value": "#efe9dc"
+              "value": "#ebe5d8"
             }
           ],
           "stroke": {
@@ -444,20 +444,22 @@
   "config": {
     "background": "transparent",
     "text": {
-      "font": "Source Serif 4",
+      "font": "'Source Serif 4', Georgia, serif",
       "fill": "#3b3226"
     },
     "legend": {
-      "labelFont": "Source Serif 4",
-      "titleFont": "Source Serif 4",
+      "labelFont": "'Source Serif 4', Georgia, serif",
+      "titleFont": "'Source Serif 4', Georgia, serif",
       "labelFontSize": 12,
       "titleFontSize": 12,
       "labelColor": "#3b3226",
       "titleColor": "#3b3226",
       "fillColor": "#f4ecdbe6",
-      "padding": 8,
+      "padding": 10,
       "cornerRadius": 4,
-      "labelLimit": 220
+      "labelLimit": 220,
+      "labelOffset": 6,
+      "rowPadding": 3
     }
   }
 }
