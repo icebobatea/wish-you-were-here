@@ -1,676 +1,669 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "Zoomable Dorling cartogram: countries pictured on postcards, circles pushed apart so none overlap.",
-  "autosize": "none",
-  "padding": 0,
-  "signals": [
+ "$schema": "https://vega.github.io/schema/vega/v5.json",
+ "description": "Zoomable Dorling cartogram: countries pictured on postcards, circles pushed apart so none overlap.",
+ "autosize": "none",
+ "padding": 0,
+ "signals": [
+  {
+   "name": "width",
+   "init": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760",
+   "on": [
     {
-      "name": "width",
-      "init": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760",
-      "on": [
-        {
-          "events": "window:resize",
-          "update": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760"
-        }
-      ]
-    },
-    {
-      "name": "height",
-      "update": "max(300, min(470, round(width * 0.603)))"
-    },
-    {
-      "name": "zoom",
-      "value": 1,
-      "bind": {
-        "input": "range",
-        "min": 1,
-        "max": 10,
-        "step": 0.1,
-        "name": "Zoom "
-      },
-      "on": [
-        {
-          "events": {
-            "type": "wheel",
-            "consume": true,
-            "filter": "event.ctrlKey"
-          },
-          "update": "clamp(zoom * pow(1.003, -event.deltaY), 1, 10)"
-        },
-        {
-          "events": "dblclick",
-          "update": "1"
-        }
-      ]
-    },
-    {
-      "name": "angles",
-      "value": [
-        0,
-        0
-      ],
-      "on": [
-        {
-          "events": "pointerdown",
-          "update": "[rotateX, centerY]"
-        }
-      ]
-    },
-    {
-      "name": "cloned",
-      "value": null,
-      "on": [
-        {
-          "events": "pointerdown",
-          "update": "copy('projection')"
-        }
-      ]
-    },
-    {
-      "name": "start",
-      "value": null,
-      "on": [
-        {
-          "events": "pointerdown",
-          "update": "invert(cloned, xy())"
-        }
-      ]
-    },
-    {
-      "name": "drag",
-      "value": null,
-      "on": [
-        {
-          "events": "[pointerdown, window:pointerup] > window:pointermove",
-          "update": "invert(cloned, xy())"
-        }
-      ]
-    },
-    {
-      "name": "delta",
-      "value": null,
-      "on": [
-        {
-          "events": {
-            "signal": "drag"
-          },
-          "update": "[drag[0] - start[0], start[1] - drag[1]]"
-        }
-      ]
-    },
-    {
-      "name": "rotateX",
-      "value": -60,
-      "on": [
-        {
-          "events": {
-            "signal": "delta"
-          },
-          "update": "angles[0] + delta[0]"
-        },
-        {
-          "events": "dblclick",
-          "update": "-60"
-        }
-      ]
-    },
-    {
-      "name": "centerY",
-      "value": 10,
-      "on": [
-        {
-          "events": {
-            "signal": "delta"
-          },
-          "update": "clamp(angles[1] + delta[1], -70, 70)"
-        },
-        {
-          "events": "dblclick",
-          "update": "10"
-        }
-      ]
-    },
-    {
-      "name": "pick",
-      "value": null,
-      "on": [
-        {
-          "events": "@legendSymbol:click, @legendLabel:click",
-          "update": "pick === datum.value ? null : datum.value",
-          "force": true
-        },
-        {
-          "events": "dblclick",
-          "update": "null"
-        }
-      ]
+     "events": "window:resize",
+     "update": "isFinite(containerSize()[0]) && containerSize()[0] > 0 ? containerSize()[0] : 760"
     }
-  ],
-  "projections": [
+   ]
+  },
+  {
+   "name": "height",
+   "update": "max(300, min(470, round(width * 0.603)))"
+  },
+  {
+   "name": "zoom",
+   "value": 1,
+   "bind": {
+    "input": "range",
+    "min": 1,
+    "max": 10,
+    "step": 0.1,
+    "name": "Zoom "
+   },
+   "on": [
     {
-      "name": "projection",
-      "type": "equalEarth",
-      "scale": {
-        "signal": "width / 5.4 * zoom"
-      },
-      "rotate": [
-        {
-          "signal": "rotateX"
-        },
-        0,
-        0
-      ],
-      "center": [
-        0,
-        {
-          "signal": "centerY"
-        }
-      ],
-      "translate": [
-        {
-          "signal": "width / 2"
-        },
-        {
-          "signal": "height / 2"
-        }
-      ]
+     "events": {
+      "type": "wheel",
+      "consume": true,
+      "filter": "event.ctrlKey"
+     },
+     "update": "clamp(zoom * pow(1.003, -event.deltaY), 1, 10)"
+    },
+    {
+     "events": "dblclick",
+     "update": "1"
     }
-  ],
-  "data": [
+   ]
+  },
+  {
+   "name": "angles",
+   "value": [
+    0,
+    0
+   ],
+   "on": [
     {
-      "name": "world",
-      "url": "data/ne_110m_admin_0_countries.topojson",
-      "format": {
-        "type": "topojson",
-        "feature": "ne_110m_admin_0_countries"
-      }
-    },
-    {
-      "name": "places",
-      "url": "data/depicted_countries.csv",
-      "format": {
-        "type": "csv",
-        "parse": "auto"
-      },
-      "transform": [
-        {
-          "type": "geopoint",
-          "projection": "projection",
-          "fields": [
-            "longitude",
-            "latitude"
-          ],
-          "as": [
-            "tx",
-            "ty"
-          ]
-        },
-        {
-          "type": "formula",
-          "as": "x",
-          "expr": "datum.tx"
-        },
-        {
-          "type": "formula",
-          "as": "y",
-          "expr": "datum.ty"
-        },
-        {
-          "type": "formula",
-          "as": "r",
-          "expr": "sqrt(scale('size', datum.postcards)) / 2"
-        },
-        {
-          "type": "formula",
-          "as": "rr",
-          "expr": "datum.r + 1.5"
-        },
-        {
-          "type": "force",
-          "static": true,
-          "restart": true,
-          "iterations": 300,
-          "forces": [
-            {
-              "force": "collide",
-              "radius": {
-                "field": "rr"
-              },
-              "iterations": 3
-            },
-            {
-              "force": "x",
-              "x": "tx",
-              "strength": 0.3
-            },
-            {
-              "force": "y",
-              "y": "ty",
-              "strength": 0.3
-            }
-          ]
-        }
-      ]
+     "events": "pointerdown",
+     "update": "[rotateX, centerY]"
     }
-  ],
-  "scales": [
+   ]
+  },
+  {
+   "name": "cloned",
+   "value": null,
+   "on": [
     {
-      "name": "theme",
-      "type": "ordinal",
-      "domain": [
-        "Exhibition Building",
-        "War & service",
-        "Migration",
-        "Correspondence",
-        "Other"
-      ],
-      "range": [
-        "#b07d10",
-        "#9b2c2c",
-        "#1a66a8",
-        "#4a8a32",
-        "#a39a8a"
-      ]
-    },
-    {
-      "name": "size",
-      "type": "sqrt",
-      "domain": [
-        1,
-        300
-      ],
-      "range": [
-        30,
-        2400
-      ],
-      "zero": false
+     "events": "pointerdown",
+     "update": "copy('projection')"
     }
-  ],
-  "legends": [
+   ]
+  },
+  {
+   "name": "start",
+   "value": null,
+   "on": [
     {
-      "fill": "theme",
-      "title": "Most common theme",
-      "orient": "bottom-right",
-      "symbolType": "circle",
-      "offset": 16,
-      "encode": {
-        "symbols": {
-          "name": "legendSymbol",
-          "interactive": true,
-          "update": {
-            "opacity": {
-              "signal": "!pick || pick === datum.value ? 1 : 0.3"
-            },
-            "cursor": {
-              "value": "pointer"
-            }
-          }
-        },
-        "labels": {
-          "name": "legendLabel",
-          "interactive": true,
-          "update": {
-            "opacity": {
-              "signal": "!pick || pick === datum.value ? 1 : 0.3"
-            },
-            "cursor": {
-              "value": "pointer"
-            }
-          }
-        }
-      }
-    },
-    {
-      "size": "size",
-      "title": "Postcards",
-      "orient": "bottom-left",
-      "symbolType": "circle",
-      "values": [
-        1,
-        10,
-        50,
-        250
-      ],
-      "symbolFillColor": "#b9ad97",
-      "symbolStrokeColor": "#fbf7ef"
+     "events": "pointerdown",
+     "update": "invert(cloned, xy())"
     }
-  ],
-  "marks": [
+   ]
+  },
+  {
+   "name": "drag",
+   "value": null,
+   "on": [
     {
-      "type": "shape",
-      "from": {
-        "data": "world"
-      },
-      "clip": true,
-      "encode": {
-        "enter": {
-          "fill": {
-            "value": "#e6dcc6"
-          },
-          "stroke": {
-            "value": "#fbf7ef"
-          },
-          "strokeWidth": {
-            "value": 0.6
-          }
-        }
-      },
-      "transform": [
-        {
-          "type": "geoshape",
-          "projection": "projection"
-        }
-      ]
-    },
-    {
-      "type": "rule",
-      "from": {
-        "data": "places"
-      },
-      "clip": true,
-      "interactive": false,
-      "encode": {
-        "enter": {
-          "stroke": {
-            "value": "#3b3226"
-          },
-          "strokeWidth": {
-            "value": 0.8
-          },
-          "strokeOpacity": {
-            "value": 0.55
-          }
-        },
-        "update": {
-          "x": {
-            "field": "tx"
-          },
-          "y": {
-            "field": "ty"
-          },
-          "x2": {
-            "field": "x"
-          },
-          "y2": {
-            "field": "y"
-          }
-        }
-      }
-    },
-    {
-      "type": "symbol",
-      "name": "dots",
-      "from": {
-        "data": "places"
-      },
-      "clip": true,
-      "encode": {
-        "enter": {
-          "shape": {
-            "value": "circle"
-          },
-          "stroke": {
-            "value": "#fbf7ef"
-          },
-          "strokeWidth": {
-            "value": 1.5
-          },
-          "cursor": {
-            "value": "pointer"
-          },
-          "size": {
-            "scale": "size",
-            "field": "postcards"
-          },
-          "fill": {
-            "scale": "theme",
-            "field": "top_theme"
-          },
-          "tooltip": {
-            "signal": "{'Place pictured': datum.country, 'Postcards': datum.postcards, 'Most common theme': datum.top_theme}"
-          }
-        },
-        "update": {
-          "x": {
-            "field": "x"
-          },
-          "y": {
-            "field": "y"
-          },
-          "opacity": {
-            "signal": "!pick || pick === datum.top_theme ? 0.9 : 0.12"
-          },
-          "stroke": {
-            "value": "#fbf7ef"
-          }
-        },
-        "hover": {
-          "stroke": {
-            "value": "#3b3226"
-          }
-        }
-      }
-    },
-    {
-      "type": "text",
-      "name": "fixed_labels_halo",
-      "from": {
-        "data": "places"
-      },
-      "clip": true,
-      "interactive": false,
-      "encode": {
-        "enter": {
-          "fontSize": {
-            "value": 12
-          },
-          "fontWeight": {
-            "value": 600
-          },
-          "baseline": {
-            "value": "middle"
-          },
-          "fill": {
-            "value": "#f4ecdb"
-          },
-          "stroke": {
-            "value": "#f4ecdb"
-          },
-          "strokeWidth": {
-            "value": 4
-          },
-          "strokeJoin": {
-            "value": "round"
-          }
-        },
-        "update": {
-          "x": {
-            "signal": "datum.x + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? datum.r + 5 : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? -datum.r - 5 : 0)"
-          },
-          "y": {
-            "signal": "datum.y + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'bottom' ? datum.r + 10 : 0)"
-          },
-          "align": {
-            "signal": "({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? 'left' : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? 'right' : 'center'"
-          },
-          "text": {
-            "signal": "{'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] != null ? datum.country : ''"
-          }
-        }
-      }
-    },
-    {
-      "type": "text",
-      "name": "fixed_labels",
-      "from": {
-        "data": "places"
-      },
-      "clip": true,
-      "interactive": false,
-      "encode": {
-        "enter": {
-          "fontSize": {
-            "value": 12
-          },
-          "fontWeight": {
-            "value": 600
-          },
-          "baseline": {
-            "value": "middle"
-          },
-          "fill": {
-            "value": "#3b3226"
-          },
-          "stroke": {
-            "value": null
-          },
-          "strokeWidth": {
-            "value": 0
-          },
-          "strokeJoin": {
-            "value": "round"
-          }
-        },
-        "update": {
-          "x": {
-            "signal": "datum.x + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? datum.r + 5 : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? -datum.r - 5 : 0)"
-          },
-          "y": {
-            "signal": "datum.y + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'bottom' ? datum.r + 10 : 0)"
-          },
-          "align": {
-            "signal": "({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? 'left' : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? 'right' : 'center'"
-          },
-          "text": {
-            "signal": "{'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] != null ? datum.country : ''"
-          }
-        }
-      }
-    },
-    {
-      "type": "text",
-      "name": "place_labels_halo",
-      "from": {
-        "data": "places"
-      },
-      "clip": true,
-      "interactive": false,
-      "encode": {
-        "enter": {
-          "fontSize": {
-            "value": 12
-          },
-          "fontWeight": {
-            "value": 600
-          },
-          "fill": {
-            "value": "#f4ecdb"
-          },
-          "stroke": {
-            "value": "#f4ecdb"
-          },
-          "strokeWidth": {
-            "value": 4
-          },
-          "strokeJoin": {
-            "value": "round"
-          }
-        },
-        "update": {
-          "x": {
-            "signal": "datum.x + datum.r"
-          },
-          "y": {
-            "field": "y"
-          },
-          "text": {
-            "signal": "(datum.postcards >= 2 || zoom > 3) && {'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] == null ? datum.country : ''"
-          }
-        }
-      },
-      "transform": [
-        {
-          "type": "label",
-          "avoidMarks": [
-            "dots",
-            "fixed_labels_halo"
-          ],
-          "size": {
-            "signal": "[width, height]"
-          },
-          "anchor": [
-            "right",
-            "top-right",
-            "bottom-right"
-          ],
-          "offset": [
-            3,
-            2,
-            2
-          ]
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "name": "place_labels",
-      "from": {
-        "data": "place_labels_halo"
-      },
-      "clip": true,
-      "interactive": false,
-      "encode": {
-        "update": {
-          "x": {
-            "field": "x"
-          },
-          "y": {
-            "field": "y"
-          },
-          "text": {
-            "field": "text"
-          },
-          "align": {
-            "field": "align"
-          },
-          "baseline": {
-            "field": "baseline"
-          },
-          "opacity": {
-            "field": "opacity"
-          },
-          "fontSize": {
-            "value": 12
-          },
-          "fontWeight": {
-            "value": 600
-          },
-          "fill": {
-            "value": "#3b3226"
-          }
-        }
-      }
+     "events": "[pointerdown, window:pointerup] > window:pointermove",
+     "update": "invert(cloned, xy())"
     }
-  ],
-  "config": {
-    "background": "transparent",
-    "text": {
-      "font": "'Source Serif 4', Georgia, serif",
-      "fill": "#3b3226"
-    },
-    "legend": {
-      "labelFont": "'Source Serif 4', Georgia, serif",
-      "titleFont": "'Source Serif 4', Georgia, serif",
-      "labelFontSize": 12,
-      "titleFontSize": 12,
-      "labelColor": "#3b3226",
-      "titleColor": "#3b3226",
-      "fillColor": "#f4ecdbe6",
-      "padding": 10,
-      "cornerRadius": 4,
-      "labelLimit": 220,
-      "labelOffset": 6,
-      "rowPadding": 3
+   ]
+  },
+  {
+   "name": "delta",
+   "value": null,
+   "on": [
+    {
+     "events": {
+      "signal": "drag"
+     },
+     "update": "[drag[0] - start[0], start[1] - drag[1]]"
     }
+   ]
+  },
+  {
+   "name": "rotateX",
+   "value": -60,
+   "on": [
+    {
+     "events": {
+      "signal": "delta"
+     },
+     "update": "angles[0] + delta[0]"
+    },
+    {
+     "events": "dblclick",
+     "update": "-60"
+    }
+   ]
+  },
+  {
+   "name": "centerY",
+   "value": 10,
+   "on": [
+    {
+     "events": {
+      "signal": "delta"
+     },
+     "update": "clamp(angles[1] + delta[1], -70, 70)"
+    },
+    {
+     "events": "dblclick",
+     "update": "10"
+    }
+   ]
+  },
+  {
+   "name": "pick",
+   "value": null,
+   "on": [
+    {
+     "events": "@legendSymbol:click, @legendLabel:click",
+     "update": "pick === datum.value ? null : datum.value",
+     "force": true
+    },
+    {
+     "events": "dblclick",
+     "update": "null"
+    }
+   ]
   }
+ ],
+ "projections": [
+  {
+   "name": "projection",
+   "type": "equalEarth",
+   "scale": {
+    "signal": "width / 5.4 * zoom"
+   },
+   "rotate": [
+    {
+     "signal": "rotateX"
+    },
+    0,
+    0
+   ],
+   "center": [
+    0,
+    {
+     "signal": "centerY"
+    }
+   ],
+   "translate": [
+    {
+     "signal": "width / 2"
+    },
+    {
+     "signal": "height / 2"
+    }
+   ]
+  }
+ ],
+ "data": [
+  {
+   "name": "world",
+   "url": "data/ne_110m_admin_0_countries.topojson",
+   "format": {
+    "type": "topojson",
+    "feature": "ne_110m_admin_0_countries"
+   }
+  },
+  {
+   "name": "places",
+   "url": "data/depicted_countries.csv",
+   "format": {
+    "type": "csv",
+    "parse": "auto"
+   },
+   "transform": [
+    {
+     "type": "geopoint",
+     "projection": "projection",
+     "fields": [
+      "longitude",
+      "latitude"
+     ],
+     "as": [
+      "tx",
+      "ty"
+     ]
+    },
+    {
+     "type": "formula",
+     "as": "x",
+     "expr": "datum.tx"
+    },
+    {
+     "type": "formula",
+     "as": "y",
+     "expr": "datum.ty"
+    },
+    {
+     "type": "formula",
+     "as": "r",
+     "expr": "sqrt(scale('size', datum.postcards)) / 2"
+    },
+    {
+     "type": "formula",
+     "as": "rr",
+     "expr": "datum.r + 1.5"
+    },
+    {
+     "type": "force",
+     "static": true,
+     "restart": true,
+     "iterations": 300,
+     "forces": [
+      {
+       "force": "collide",
+       "radius": {
+        "field": "rr"
+       },
+       "iterations": 3
+      },
+      {
+       "force": "x",
+       "x": "tx",
+       "strength": 0.3
+      },
+      {
+       "force": "y",
+       "y": "ty",
+       "strength": 0.3
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "scales": [
+  {
+   "name": "theme",
+   "type": "ordinal",
+   "domain": [
+    "Exhibition Building",
+    "War & service",
+    "Migration",
+    "Correspondence",
+    "Other"
+   ],
+   "range": [
+    "#b07d10",
+    "#9b2c2c",
+    "#1a66a8",
+    "#4a8a32",
+    "#a39a8a"
+   ]
+  },
+  {
+   "name": "size",
+   "type": "sqrt",
+   "domain": [
+    1,
+    300
+   ],
+   "range": [
+    30,
+    2400
+   ],
+   "zero": false
+  }
+ ],
+ "legends": [
+  {
+   "fill": "theme",
+   "title": "Most common theme",
+   "orient": "bottom-right",
+   "symbolType": "circle",
+   "offset": 16,
+   "encode": {
+    "symbols": {
+     "name": "legendSymbol",
+     "interactive": true,
+     "update": {
+      "opacity": {
+       "signal": "!pick || pick === datum.value ? 1 : 0.3"
+      },
+      "cursor": {
+       "value": "pointer"
+      }
+     }
+    },
+    "labels": {
+     "name": "legendLabel",
+     "interactive": true,
+     "update": {
+      "opacity": {
+       "signal": "!pick || pick === datum.value ? 1 : 0.3"
+      },
+      "cursor": {
+       "value": "pointer"
+      }
+     }
+    }
+   }
+  },
+  {
+   "size": "size",
+   "title": "Postcards",
+   "orient": "bottom-left",
+   "symbolType": "circle",
+   "values": [
+    1,
+    10,
+    50,
+    250
+   ],
+   "symbolFillColor": "#b9ad97",
+   "symbolStrokeColor": "#fbf7ef"
+  }
+ ],
+ "marks": [
+  {
+   "type": "shape",
+   "from": {
+    "data": "world"
+   },
+   "clip": true,
+   "encode": {
+    "enter": {
+     "fill": {
+      "value": "#e6dcc6"
+     },
+     "stroke": {
+      "value": "#fbf7ef"
+     },
+     "strokeWidth": {
+      "value": 0.6
+     }
+    }
+   },
+   "transform": [
+    {
+     "type": "geoshape",
+     "projection": "projection"
+    }
+   ]
+  },
+  {
+   "type": "rule",
+   "from": {
+    "data": "places"
+   },
+   "clip": true,
+   "interactive": false,
+   "encode": {
+    "enter": {
+     "stroke": {
+      "value": "#3b3226"
+     },
+     "strokeWidth": {
+      "value": 0.8
+     },
+     "strokeOpacity": {
+      "value": 0.55
+     }
+    },
+    "update": {
+     "x": {
+      "field": "tx"
+     },
+     "y": {
+      "field": "ty"
+     },
+     "x2": {
+      "field": "x"
+     },
+     "y2": {
+      "field": "y"
+     }
+    }
+   }
+  },
+  {
+   "type": "symbol",
+   "name": "dots",
+   "from": {
+    "data": "places"
+   },
+   "clip": true,
+   "encode": {
+    "enter": {
+     "shape": {
+      "value": "circle"
+     },
+     "stroke": {
+      "value": "#fbf7ef"
+     },
+     "strokeWidth": {
+      "value": 1.5
+     },
+     "cursor": {
+      "value": "pointer"
+     },
+     "size": {
+      "scale": "size",
+      "field": "postcards"
+     },
+     "fill": {
+      "scale": "theme",
+      "field": "top_theme"
+     },
+     "tooltip": {
+      "signal": "{'Place pictured': datum.country, 'Postcards': datum.postcards, 'Most common theme': datum.top_theme}"
+     }
+    },
+    "update": {
+     "x": {
+      "field": "x"
+     },
+     "y": {
+      "field": "y"
+     },
+     "opacity": {
+      "signal": "!pick || pick === datum.top_theme ? 0.9 : 0.12"
+     },
+     "stroke": {
+      "value": "#fbf7ef"
+     }
+    },
+    "hover": {
+     "stroke": {
+      "value": "#3b3226"
+     }
+    }
+   }
+  },
+  {
+   "type": "text",
+   "name": "fixed_labels_halo",
+   "from": {
+    "data": "places"
+   },
+   "clip": true,
+   "interactive": false,
+   "encode": {
+    "enter": {
+     "fontSize": {
+      "value": 12
+     },
+     "fontWeight": {
+      "value": 600
+     },
+     "baseline": {
+      "value": "middle"
+     },
+     "fill": {
+      "value": "#f4ecdb"
+     },
+     "stroke": {
+      "value": "#f4ecdb"
+     },
+     "strokeWidth": {
+      "value": 4
+     },
+     "strokeJoin": {
+      "value": "round"
+     }
+    },
+    "update": {
+     "x": {
+      "signal": "datum.x + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? datum.r + 5 : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? -datum.r - 5 : 0)"
+     },
+     "y": {
+      "signal": "datum.y + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'bottom' ? datum.r + 10 : 0)"
+     },
+     "align": {
+      "signal": "({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? 'left' : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? 'right' : 'center'"
+     },
+     "text": {
+      "signal": "{'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] != null ? datum.country : ''"
+     }
+    }
+   }
+  },
+  {
+   "type": "text",
+   "name": "fixed_labels",
+   "from": {
+    "data": "places"
+   },
+   "clip": true,
+   "interactive": false,
+   "encode": {
+    "enter": {
+     "fontSize": {
+      "value": 12
+     },
+     "fontWeight": {
+      "value": 600
+     },
+     "baseline": {
+      "value": "middle"
+     },
+     "fill": {
+      "value": "#3b3226"
+     },
+     "stroke": {
+      "value": null
+     },
+     "strokeWidth": {
+      "value": 0
+     },
+     "strokeJoin": {
+      "value": "round"
+     }
+    },
+    "update": {
+     "x": {
+      "signal": "datum.x + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? datum.r + 5 : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? -datum.r - 5 : 0)"
+     },
+     "y": {
+      "signal": "datum.y + (({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'bottom' ? datum.r + 10 : 0)"
+     },
+     "align": {
+      "signal": "({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'right' ? 'left' : ({'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country]) === 'left' ? 'right' : 'center'"
+     },
+     "text": {
+      "signal": "{'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.country] != null ? datum.country : ''"
+     }
+    }
+   }
+  },
+  {
+   "type": "text",
+   "name": "place_labels_halo",
+   "from": {
+    "data": "dots"
+   },
+   "clip": true,
+   "interactive": false,
+   "encode": {
+    "enter": {
+     "fontSize": {
+      "value": 12
+     },
+     "fontWeight": {
+      "value": 600
+     },
+     "fill": {
+      "value": "#f4ecdb"
+     },
+     "stroke": {
+      "value": "#f4ecdb"
+     },
+     "strokeWidth": {
+      "value": 4
+     },
+     "strokeJoin": {
+      "value": "round"
+     }
+    },
+    "update": {
+     "text": {
+      "signal": "(datum.datum.postcards >= 2 || zoom > 3) && {'United Kingdom': 'left', 'France': 'left', 'Algeria': 'left', 'Greece': 'bottom', 'Australia': 'center'}[datum.datum.country] == null ? datum.datum.country : ''"
+     }
+    }
+   },
+   "transform": [
+    {
+     "type": "label",
+     "avoidMarks": [
+      "fixed_labels_halo"
+     ],
+     "size": {
+      "signal": "[width, height]"
+     },
+     "anchor": [
+      "right",
+      "top-right",
+      "bottom-right"
+     ],
+     "offset": [
+      3,
+      2,
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "type": "text",
+   "name": "place_labels",
+   "from": {
+    "data": "place_labels_halo"
+   },
+   "clip": true,
+   "interactive": false,
+   "encode": {
+    "update": {
+     "x": {
+      "field": "x"
+     },
+     "y": {
+      "field": "y"
+     },
+     "text": {
+      "field": "text"
+     },
+     "align": {
+      "field": "align"
+     },
+     "baseline": {
+      "field": "baseline"
+     },
+     "opacity": {
+      "field": "opacity"
+     },
+     "fontSize": {
+      "value": 12
+     },
+     "fontWeight": {
+      "value": 600
+     },
+     "fill": {
+      "value": "#3b3226"
+     }
+    }
+   }
+  }
+ ],
+ "config": {
+  "background": "transparent",
+  "text": {
+   "font": "'Source Serif 4', Georgia, serif",
+   "fill": "#3b3226"
+  },
+  "legend": {
+   "labelFont": "'Source Serif 4', Georgia, serif",
+   "titleFont": "'Source Serif 4', Georgia, serif",
+   "labelFontSize": 12,
+   "titleFontSize": 12,
+   "labelColor": "#3b3226",
+   "titleColor": "#3b3226",
+   "fillColor": "#f4ecdbe6",
+   "padding": 10,
+   "cornerRadius": 4,
+   "labelLimit": 220,
+   "labelOffset": 6,
+   "rowPadding": 3
+  }
+ }
 }
